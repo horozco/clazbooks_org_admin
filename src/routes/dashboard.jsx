@@ -59,7 +59,7 @@ const dashboardRoutes = [
     icon: Email,
     component: () => <h1>Enviar Emails</h1>
   },
-  { redirect: true, path: '/', pathRegex: /^\/$/, to: '/dashboard', navbarName: 'Redirect' }
+  { redirect: true, path: '/', pathRegex: /^\/$/, to: '/login', navbarName: 'Redirect' }
 ];
 
 export default dashboardRoutes;

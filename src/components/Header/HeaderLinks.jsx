@@ -1,6 +1,8 @@
 import React from "react";
 import classNames from "classnames";
 import { Manager, Target, Popper } from "react-popper";
+import { SessionConsumer } from "components/Session/SessionContext.jsx";
+import { withRouter } from "react-router-dom";
 import {
   withStyles,
   IconButton,
@@ -14,6 +16,26 @@ import {
 import { Work, Settings } from "@material-ui/icons";
 
 import headerLinksStyle from "assets/jss/material-dashboard-react/headerLinksStyle";
+
+const Signout = withRouter(
+  ({history}) => (
+    <SessionConsumer>
+      {
+        session => (
+          <MenuItem
+            onClick={() => {
+              session.signout().then(() => {
+                history.push("/")
+              })
+            }}
+          >
+            Cerrar Sesión
+          </MenuItem>
+        )
+      }
+    </SessionConsumer>
+  )
+);
 
 class HeaderLinks extends React.Component {
   state = {
@@ -77,12 +99,7 @@ class HeaderLinks extends React.Component {
               >
                 <Paper className={classes.dropdown}>
                   <MenuList role="menu">
-                    <MenuItem
-                      onClick={this.handleClose}
-                      className={classes.dropdownItem}
-                    >
-                      Cerrar Sesión
-                    </MenuItem>
+                    <Signout />
                   </MenuList>
                 </Paper>
               </Grow>
