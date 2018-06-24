@@ -214,6 +214,13 @@ const sidebarStyle = theme => ({
     width: "260px",
     zIndex: "4",
     overflowScrolling: 'touch'
+  },
+  divider: {
+    right: "15px",
+    width: "calc(100% - 30px)",
+    height: "1px",
+    backgroundColor: "rgba(180, 180, 180, 0.3)",
+    borderWidth: "0"
   }
 });
 

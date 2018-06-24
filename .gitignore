@@ -1,2 +1,5 @@
 /node_modules*
 /documentation*
+.env.production
+.env
+build/*

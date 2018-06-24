@@ -1,8 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import { Manager, Target, Popper } from "react-popper";
-import { SessionConsumer } from "components/Session/SessionContext.jsx";
-import { withRouter } from "react-router-dom";
+
 import {
   withStyles,
   IconButton,
@@ -14,28 +13,10 @@ import {
   Hidden
 } from "material-ui";
 import { Work, Settings } from "@material-ui/icons";
+import { Link } from "react-router-dom";
 
 import headerLinksStyle from "assets/jss/material-dashboard-react/headerLinksStyle";
 
-const Signout = withRouter(
-  ({history}) => (
-    <SessionConsumer>
-      {
-        session => (
-          <MenuItem
-            onClick={() => {
-              session.signout().then(() => {
-                history.push("/")
-              })
-            }}
-          >
-            Cerrar Sesión
-          </MenuItem>
-        )
-      }
-    </SessionConsumer>
-  )
-);
 
 class HeaderLinks extends React.Component {
   state = {
@@ -53,59 +34,18 @@ class HeaderLinks extends React.Component {
     const { open } = this.state;
     return (
       <div>
-        <IconButton
-          color="inherit"
-          aria-label="Configuración"
-          className={classes.buttonLink}
-        >
-          <Settings className={classes.links} />
-          <Hidden mdUp>
-            <p className={classes.linkText}>Configuración</p>
-          </Hidden>
-        </IconButton>
-        
-        <Manager style={{ display: "inline-block" }}>
-          <Target>
-            <IconButton
-              color="inherit"
-              aria-label="Work"
-              aria-owns={open ? "menu-list" : null}
-              aria-haspopup="true"
-              onClick={this.handleClick}
-              className={classes.buttonLink}
-            >
-              <Work className={classes.links} />
-              <Hidden mdUp>
-                <p onClick={this.handleClick} className={classes.linkText}>
-                  Mi Cuenta
-                </p>
-              </Hidden>
-            </IconButton>
-          </Target>
-          <Popper
-            placement="bottom-start"
-            eventsEnabled={open}
-            className={
-              classNames({ [classes.popperClose]: !open }) +
-              " " +
-              classes.pooperResponsive
-            }
+        <Link to={`/settings`}>
+          <IconButton
+            color="inherit"
+            aria-label="Configuración"
+            className={classes.buttonLink}
           >
-            <ClickAwayListener onClickAway={this.handleClose}>
-              <Grow
-                in={open}
-                id="menu-list"
-                style={{ transformOrigin: "0 0 0" }}
-              >
-                <Paper className={classes.dropdown}>
-                  <MenuList role="menu">
-                    <Signout />
-                  </MenuList>
-                </Paper>
-              </Grow>
-            </ClickAwayListener>
-          </Popper>
-        </Manager>
+            <Settings className={classes.links} />
+            <Hidden mdUp>
+              <p className={classes.linkText}>Configuración</p>
+            </Hidden>
+          </IconButton>
+        </Link>
       </div>
     );
   }

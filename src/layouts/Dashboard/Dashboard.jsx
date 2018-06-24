@@ -13,7 +13,8 @@ import dashboardRoutes from "routes/dashboard.jsx";
 import appStyle from "assets/jss/material-dashboard-react/appStyle.jsx";
 
 import image from "assets/img/sidebar-2.jpg";
-import logo from "assets/img/reactlogo.png";
+
+import { getOrganization } from '../../utils/session.js';
 
 const switchRoutes = (
   <Switch>
@@ -29,29 +30,33 @@ class App extends React.Component {
   state = {
     mobileOpen: false
   };
+
   handleDrawerToggle = () => {
     this.setState({ mobileOpen: !this.state.mobileOpen });
   };
+
   getRoute() {
     return this.props.location.pathname !== "/maps";
   }
+
   componentDidMount() {
     if(navigator.platform.indexOf('Win') > -1){
       // eslint-disable-next-line
       const ps = new PerfectScrollbar(this.refs.mainPanel);
     }
   }
+
   componentDidUpdate() {
     this.refs.mainPanel.scrollTop = 0;
   }
+
   render() {
     const { classes, ...rest } = this.props;
     return (
       <div className={classes.wrapper}>
         <Sidebar
           routes={dashboardRoutes}
-          logoText={"Organization Name"}
-          logo={logo}
+          logoText={getOrganization().name}
           image={image}
           handleDrawerToggle={this.handleDrawerToggle}
           open={this.state.mobileOpen}

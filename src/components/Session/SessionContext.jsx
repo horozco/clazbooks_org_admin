@@ -1,41 +1,40 @@
-import React from "react";
-
-export const session = {
-  organization: {
-    name: "Este es el nombre",
-    logo: "https://www.seoclerk.com/pics/558390-11FO8A1505384509.png"
-  },
-  token: "bashasldajej3d",
-  isLoggedIn: true
-};
+import React, { Component } from "react";
+import { login, clearSession, loggedIn, getSession, setOrganization } from '../../utils/session.js';
 
 const { Provider, Consumer } = React.createContext();
 
-export class SessionProvider extends React.Component {
-  login = () => {
-    return Promise.resolve(session).then(response => {
+export class SessionProvider extends Component {
+  _handleLogin = (params) => {
+    return login(params).then( ({data}) => {
       this.setState({
-        ...response
-      });
+        ...data,
+        isLoggedIn: true
+      })
     });
   };
 
-  signout = () => {
+  _signout = () => {
     return Promise.resolve().then(response => {
+      clearSession();
       this.setState({
-        organization: {},
-        token: {},
         isLoggedIn: false,
       });
     });
   };
 
+  _updateOrganization = ({data: {organization}}) => {
+    debugger;
+    this.setState({
+      organization_admin: {organization: organization}
+    }, () => {setOrganization(organization)})
+  }
+
   state = {
-    organization: {},
-    token: {},
-    isLoggedIn: false,
-    login: this.login,
-    signout: this.signout
+    isLoggedIn: loggedIn(),
+    login: this._handleLogin,
+    signout: this._signout,
+    updateOrganization: this._updateOrganization,
+    ...getSession()
   };
 
   render() {

@@ -1,0 +1,33 @@
+.login-form{
+  margin: 0 auto;
+}
+
+.field-wrapper{
+  margin-bottom: 16px;
+}
+
+.center-text{
+  text-align: center;
+}
+
+.error{
+  color: red;
+}
+
+.wrapper{
+  max-width: 400px;
+  margin: 0 auto;
+  padding-left: 20px;
+  padding-right: 20px;
+  text-align: center;
+}
+
+.img{
+  max-width: 100%;
+  width: 120px;
+}
+
+.img-show{
+  max-width: 100%;
+  width: 300px;
+}

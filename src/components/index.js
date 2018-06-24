@@ -11,8 +11,7 @@ import AuthRoute from "./Auth/AuthRoute.jsx";
 import ChartCard from "./Cards/ChartCard.jsx";
 import ProfileCard from "./Cards/ProfileCard.jsx";
 import RegularCard from "./Cards/RegularCard.jsx";
-import StatsCard from "./Cards/StatsCard.jsx";
-import TasksCard from "./Cards/TasksCard.jsx";
+import StatsCard from "./Cards/StatsCard.jsx";  
 
 // ##############################
 // // // CustomButtons
@@ -92,7 +91,6 @@ export {
   ProfileCard,
   RegularCard,
   StatsCard,
-  TasksCard,
   // CustomButtons
   Button,
   IconButton,

@@ -7,33 +7,33 @@ import URLS from '../../constants/urls.js';
 
 import { RegularCard, Table, ItemGrid } from 'components';
 
-class Users extends React.Component {
+class Codes extends React.Component {
   state = {}
 
   componentWillMount() {
-    client.get(URLS.USERS).then( ({data}) => {
+    client.get(URLS.CODES).then( ({data}) => {
       this.setState({...data});
     });
   }
 
   render() {
     const {
-      users
+      codes
     } = this.state;
     return (
       <Grid container>
         <ItemGrid xs={12} sm={12} md={12}>
           {
-            users ? (
+            codes ? (
               <RegularCard
-                cardTitle='Usuarios'
-                cardSubtitle='Estos son los usuarios de tu organización.'
+                cardTitle='Códigos de Usuario'
+                cardSubtitle='Estos son sus códigos de usuarios'
                 content={
                   <Table
                     tableHeaderColor='primary'
-                    tableHead={['#', 'Nombre', 'Email', 'Tiempo Total Activo', 'Libro más escuchado', 'Libro más leído', 'Opciones']}
-                    tableData={users.map((user, index)=>{
-                      return [index, user.name, user.email, user.total_time_active, user.most_played[0], user.most_read[0], <Link to={`/users/${user.id}`}>Ver</Link>]
+                    tableHead={['#', 'Código', 'Duración', 'Activado', 'Fecha de inicio', 'Fecha de Caducidad']}
+                    tableData={codes.map((code, index)=>{
+                      return [index, code.content, code.duration, code.used, code.start_date, code.end_date]
                     })}
                   />
                 }
@@ -46,4 +46,4 @@ class Users extends React.Component {
   }
 }
 
-export default Users;
+export default Codes;

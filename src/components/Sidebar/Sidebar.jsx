@@ -12,7 +12,12 @@ import {
   ListItemText
 } from "material-ui";
 
+import { PowerSettingsNew } from '@material-ui/icons';
+
 import { HeaderLinks } from "components";
+import Signout from "../Session/Signout.jsx";
+
+import Logo from "components/OrganizationLogo/OrganizationLogo.jsx";
 
 import sidebarStyle from "assets/jss/material-dashboard-react/sidebarStyle.jsx";
 
@@ -52,13 +57,26 @@ const Sidebar = ({ ...props }) => {
           </NavLink>
         );
       })}
+      <hr className={classes.divider}/>
+      <Signout component={
+        <ListItem button className={classes.itemLink}>
+          <ListItemIcon className={classes.itemIcon}>
+            <PowerSettingsNew />
+          </ListItemIcon>
+          <ListItemText
+            primary={'Cerrar Sesión'}
+            className={classes.itemText}
+            disableTypography={true}
+          />
+        </ListItem>
+      }/>
     </List>
   );
   var brand = (
     <div className={classes.logo}>
-      <a href="https://www.creative-tim.com" className={classes.logoLink}>
+      <a href="https://clazbooks.com" className={classes.logoLink}>
         <div className={classes.logoImage}>
-          <img src={logo} alt="logo" className={classes.img} />
+          <Logo className={classes.img}></Logo>
         </div>
         {logoText}
       </a>

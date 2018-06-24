@@ -2,6 +2,8 @@ import React from 'react';
 import DashboardPage from 'views/Dashboard/Dashboard.jsx';
 import Users from 'views/Users/Users.jsx';
 import UserShow from 'views/Users/UserShow.jsx';
+import Settings from 'views/Settings/Settings.jsx';
+import Codes from 'views/Codes/Codes.jsx';
 
 import {
   Dashboard,
@@ -23,7 +25,7 @@ const dashboardRoutes = [
   {
     path: '/users/:id',
     pathRegex: /^\/users\/\d*$/,
-    navbarName: 'User Show',
+    navbarName: 'Información del usuario',
     noSidebar: true,
     component: UserShow
   },
@@ -41,7 +43,7 @@ const dashboardRoutes = [
     sidebarName: 'Códigos',
     navbarName: 'Códigos',
     icon: Fingerprint,
-    component: () => <h1>Códigos</h1>
+    component: Codes
   },
   {
     path: '/books',
@@ -49,7 +51,7 @@ const dashboardRoutes = [
     sidebarName: 'Contenido',
     navbarName: 'Contenido',
     icon: LibraryBooks,
-    component: () => <h1>Contenido</h1>
+    component: () => <h1>Work in progress...</h1>
   },
   {
     path: '/emails',
@@ -57,7 +59,14 @@ const dashboardRoutes = [
     sidebarName: 'Emails',
     navbarName: 'Enviar Emails',
     icon: Email,
-    component: () => <h1>Enviar Emails</h1>
+    component: () => <h1>Work in progress...</h1>
+  },
+  {
+    path: '/settings',
+    pathRegex: /^\/settings\/\d*$/,
+    navbarName: 'Configuración',
+    noSidebar: true,
+    component: Settings
   },
   { redirect: true, path: '/', pathRegex: /^\/$/, to: '/login', navbarName: 'Redirect' }
 ];
