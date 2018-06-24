@@ -2,24 +2,44 @@ import React from 'react';
 import { Grid } from 'material-ui';
 import { Link } from 'react-router-dom';
 
-import client from '../../utils/client.js';
+// import client from '../../utils/client.js';
+import axios from "axios";
 import URLS from '../../constants/urls.js';
+import { getAccessToken } from '../../utils/session.js';
 
 import { RegularCard, Table, ItemGrid } from 'components';
 
 class Users extends React.Component {
-  state = {}
+  state = {
+    status: "loading"
+  }
 
   componentWillMount() {
-    client.get(URLS.USERS).then( ({data}) => {
-      this.setState({...data});
-    });
+    axios
+      .get(URLS.USERS, { headers: { Authorization: getAccessToken() } })
+        .then(({ data }) => {
+          this.setState({
+            ...data,
+            status: "success"
+          });
+        })
+        .catch(() => {
+          this.setState({
+            status: "error"
+          });
+        });
   }
 
   render() {
     const {
+      status,
       users
     } = this.state;
+
+    if(status == 'loading') {
+      return <h1>Cargando...</h1>
+    }
+
     return (
       <Grid container>
         <ItemGrid xs={12} sm={12} md={12}>

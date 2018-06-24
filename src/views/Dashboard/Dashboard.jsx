@@ -45,17 +45,17 @@ class Dashboard extends React.Component {
   componentDidMount() {
     axios
       .get(URLS.DASHBOARD, { headers: { Authorization: getAccessToken() } })
-      .then(({ data: { organization_dashboard } }) => {
-        this.setState({
-          ...organization_dashboard,
-          status: "success"
+        .then(({ data: { organization_dashboard } }) => {
+          this.setState({
+            ...organization_dashboard,
+            status: "success"
+          });
+        })
+        .catch(() => {
+          this.setState({
+            status: "error"
+          });
         });
-      })
-      .catch(() => {
-        this.setState({
-          status: "error"
-        });
-      });
   }
 
   handleChange = (event, value) => {
