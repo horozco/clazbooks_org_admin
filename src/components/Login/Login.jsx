@@ -5,7 +5,7 @@ import {
 import { SessionConsumer } from "components/Session/SessionContext.jsx";
 import { withFormik, Formik } from 'formik';
 import LoginForm from "./LoginForm.jsx"
-import { TextField, Button, Snackbar, IconButton } from 'material-ui';
+import { TextField, Button, Snackbar, IconButton, Checkbox, FormControlLabel } from 'material-ui';
 import CloseIcon from '@material-ui/icons/Close';
 import logo from "assets/img/logo.png";
 import "./login.css"
@@ -15,6 +15,7 @@ class Login extends React.Component {
     redirectToReferrer: false,
     email: '',
     password: '',
+    rememberMe: false,
     showError: false,
     errors: {}
   };
@@ -25,7 +26,7 @@ class Login extends React.Component {
 
   render() {
     const { from } = { from: { pathname: "/dashboard" } };
-    const { redirectToReferrer, email, password, showError, errors } = this.state;
+    const { redirectToReferrer, email, password, rememberMe, showError, errors } = this.state;
 
     if (redirectToReferrer) {
       return <Redirect to={from} />;
@@ -36,8 +37,6 @@ class Login extends React.Component {
         {
           session => (
             <div className="wrapper">
-              <h1 className="center-text">Clazbooks Para Organizaciones</h1>
-              <h2 className="center-text">Iniciar Sesión</h2>
               <Formik
                 initialValues={{
                   email: '',
@@ -66,7 +65,7 @@ class Login extends React.Component {
                 }) => (
                   <React.Fragment>
                     <form className="login-form" onSubmit={handleSubmit}>
-                      <div>
+                      <div className="field-wrapper">
                         <TextField
                           id="email"
                           label="Email"
@@ -93,10 +92,25 @@ class Login extends React.Component {
                           margin="normal"
                         />
                       </div>
+                      <div className="field-wrapper">
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              name="rememberMe"
+                              checked={values.rememberMe}
+                              onChange={handleChange}
+                              value="true"
+                            />
+                          }
+                          label="Recordarme"
+                        />
+                      </div> 
 
-                      <Button type="submit" disabled={isSubmitting} color="primary">
-                        Login
-                      </Button>
+                      <div className="field-wrapper">
+                        <Button type="submit" disabled={isSubmitting} color="primary">
+                          Iniciar Sesión
+                        </Button>
+                      </div>
                     </form>
                     <div>
                       <img className="img" src={logo} />
