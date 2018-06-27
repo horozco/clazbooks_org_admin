@@ -40,6 +40,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    document.body.setAttribute("style", "background-color: #EEEEEE");
     if(navigator.platform.indexOf('Win') > -1){
       // eslint-disable-next-line
       const ps = new PerfectScrollbar(this.refs.mainPanel);

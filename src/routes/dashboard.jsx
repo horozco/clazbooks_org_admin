@@ -51,7 +51,7 @@ const dashboardRoutes = [
     sidebarName: 'Contenido',
     navbarName: 'Contenido',
     icon: LibraryBooks,
-    component: () => <h1>Work in progress...</h1>
+    component: () => <h1>Coming soon...</h1>
   },
   {
     path: '/emails',
@@ -59,7 +59,7 @@ const dashboardRoutes = [
     sidebarName: 'Emails',
     navbarName: 'Enviar Emails',
     icon: Email,
-    component: () => <h1>Work in progress...</h1>
+    component: () => <h1>Coming soon...</h1>
   },
   {
     path: '/settings',

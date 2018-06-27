@@ -32,3 +32,16 @@
   max-width: 100%;
   width: 300px;
 }
+
+.nav-root {
+  flex-grow: 1;
+}
+
+.nav-text {
+  flex: 1;
+}
+
+.nav-button {
+  margin-left: -12;
+  margin-right: 20;
+}
