@@ -46,19 +46,19 @@ const dashboardRoutes = [
     component: Codes
   },
   {
+    path: '/emails',
+    pathRegex: /^\/emails$/,
+    sidebarName: 'Enviar Códigos',
+    navbarName: 'Enviar Códigos',
+    icon: Email,
+    component: () => <h1>Coming soon...</h1>
+  },
+  {
     path: '/books',
     pathRegex: /^\/books$/,
     sidebarName: 'Contenido',
     navbarName: 'Contenido',
     icon: LibraryBooks,
-    component: () => <h1>Coming soon...</h1>
-  },
-  {
-    path: '/emails',
-    pathRegex: /^\/emails$/,
-    sidebarName: 'Emails',
-    navbarName: 'Enviar Emails',
-    icon: Email,
     component: () => <h1>Coming soon...</h1>
   },
   {

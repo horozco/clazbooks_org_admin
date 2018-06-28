@@ -14,18 +14,30 @@ import {
   AccessTime
 } from "@material-ui/icons";
 
-import client from "../../utils/client.js";
+import axios from "axios";
 import URLS from "../../constants/urls.js";
+import { getAccessToken } from '../../utils/session.js';
 
 class UserShow extends React.Component {
-  state = {};
+  state = {
+    status: "loading"
+  }
 
   componentDidMount() {
-    client
-      .get(`${URLS.USERS}${this.props.match.params.id}`)
-      .then(({ data }) => {
-        this.setState({ ...data });
-      });
+    axios
+      .get(`${URLS.USERS}${this.props.match.params.id}`,
+        { headers: { Authorization: getAccessToken() } })
+          .then(({ data }) => {
+            this.setState({
+              ...data,
+              status: "success"
+            });
+          })
+          .catch(() => {
+            this.setState({
+              status: "error"
+            });
+          });
   }
 
   _goBack = e => {
@@ -36,7 +48,12 @@ class UserShow extends React.Component {
   BackLink = props => <Link to={`/users`} {...props} onClick={this._goBack} />;
 
   render() {
-    const { user } = this.state;
+    const { status, user } = this.state;
+
+    if(status == 'loading') {
+      return <h1>Cargando...</h1>
+    }
+
     return (
       <Grid container>
         <ItemGrid xs={12} sm={12} md={12}>
