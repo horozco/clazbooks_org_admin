@@ -23,7 +23,6 @@ export class SessionProvider extends Component {
   };
 
   _updateOrganization = ({data: {organization}}) => {
-    debugger;
     this.setState({
       organization_admin: {organization: organization}
     }, () => {setOrganization(organization)})

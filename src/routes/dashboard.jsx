@@ -4,6 +4,7 @@ import Users from 'views/Users/Users.jsx';
 import UserShow from 'views/Users/UserShow.jsx';
 import Settings from 'views/Settings/Settings.jsx';
 import Codes from 'views/Codes/Codes.jsx';
+import Invitations from 'views/Invitations/Invitations.jsx';
 
 import {
   Dashboard,
@@ -51,7 +52,7 @@ const dashboardRoutes = [
     sidebarName: 'Enviar Códigos',
     navbarName: 'Enviar Códigos',
     icon: Email,
-    component: () => <h1>Coming soon...</h1>
+    component: Invitations
   },
   {
     path: '/books',

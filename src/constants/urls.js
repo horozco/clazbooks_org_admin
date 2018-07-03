@@ -6,7 +6,8 @@ const URLS = {
   DASHBOARD: `${BASE_URL}/api/organization_admin/dashboard`,
   USERS: `${BASE_URL}/api/organization_admin/users/`,
   ORGANIZATIONS: `${BASE_URL}/api/organization_admin/organizations/`,
-  CODES: `${BASE_URL}/api/organization_admin/codes/`
+  CODES: `${BASE_URL}/api/organization_admin/codes/`,
+  INVITATIONS: `${BASE_URL}/api/organization_admin/invitations/`
 }
 
 export default URLS

@@ -13,6 +13,7 @@ function RegularButton({ ...props }) {
     children,
     fullWidth,
     disabled,
+    customClasses,
     ...rest
   } = props;
   const btnClasses = cx({
@@ -22,7 +23,7 @@ function RegularButton({ ...props }) {
     [classes.disabled]: disabled
   });
   return (
-    <Button {...rest} className={classes.button + " " + btnClasses}>
+    <Button {...rest} className={classes.button + " " + btnClasses + " " + customClasses}>
       {children}
     </Button>
   );
@@ -43,7 +44,8 @@ RegularButton.propTypes = {
   ]),
   round: PropTypes.bool,
   fullWidth: PropTypes.bool,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
+  customClasses: PropTypes.string
 };
 
 export default withStyles(buttonStyle)(RegularButton);
