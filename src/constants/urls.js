@@ -7,7 +7,9 @@ const URLS = {
   USERS: `${BASE_URL}/api/organization_admin/users/`,
   ORGANIZATIONS: `${BASE_URL}/api/organization_admin/organizations/`,
   CODES: `${BASE_URL}/api/organization_admin/codes/`,
-  INVITATIONS: `${BASE_URL}/api/organization_admin/invitations/`
+  INVITATIONS: `/organization_admin/invitations/`,
+  BOOKS: `/organization_admin/books/`,
+  AUTHORS: `/organization_admin/authors/`,
 }
 
 export default URLS

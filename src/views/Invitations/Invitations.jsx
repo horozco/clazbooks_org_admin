@@ -1,96 +1,136 @@
 import React from 'react';
-import { Grid, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Snackbar, IconButton } from 'material-ui';
+import {
+  Grid,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+  Snackbar,
+  IconButton,
+} from 'material-ui';
 import { Link } from 'react-router-dom';
 
-import axios from "axios";
+import client from '../../utils/client';
 import URLS from '../../constants/urls.js';
 import { getAccessToken } from '../../utils/session.js';
 
-import { RegularCard, Table, ItemGrid, Button } from 'components';
+import { RegularCard, ItemGrid, Button } from 'components';
+import ReactTable from 'react-table';
 
 import SendIcon from '@material-ui/icons/Send';
 import Cancel from '@material-ui/icons/Cancel';
 import Close from '@material-ui/icons/Close';
-import "./invitation.css"
+import './invitation.css';
 
 class Invitations extends React.Component {
   state = {
-    status: "loading",
-    message: "",
-    emails: "",
+    status: 'loading',
+    message: '',
+    emails: '',
     openSendModal: false,
-    showMessage: false
-  }
+    showMessage: false,
+  };
 
-  componentWillMount() {
+  componentDidMount() {
     this._getAllInvitations();
   }
 
   _getAllInvitations = () => {
-    axios
-      .get(URLS.INVITATIONS, { headers: { Authorization: getAccessToken() } })
+    return client
+      .get(URLS.INVITATIONS)
+      .then(({ data }) => {
+        this.setState({
+          ...data,
+          status: 'success',
+        });
+      })
+      .catch(() => {
+        this.setState({
+          status: 'error',
+        });
+      });
+  };
+
+  _revokeToken = id => {
+    if (
+      window.confirm(
+        '¿Está seguro que desea revocar esta invitación? Un nuevo código se va a generar con el tiempo restante para ser enviado manualmente.'
+      )
+    ) {
+      client
+        .delete(`${URLS.INVITATIONS}/${id}`)
         .then(({ data }) => {
           this.setState({
-            ...data,
-            status: "success"
+            showMessage: true,
+            message: 'Se ha revokado esta invitación.',
+            invitations: this.state.invitations.map(
+              invitation =>
+                invitation.id === data.invitation.id
+                  ? { ...data.invitation }
+                  : { ...invitation }
+            ),
           });
         })
-        .catch(() => {
+        .catch(err => {
           this.setState({
-            status: "error"
+            showMessage: true,
+            message: err.response.data.message || 'Ha ocurrido un error.',
           });
         });
-  }
+    }
+  };
 
   _handleErrorMessageClose = () => {
-    this.setState({showMessage: false, message: ''})
-  }
+    this.setState({ showMessage: false, message: '' });
+  };
 
   _handleClickSend = () => {
-    this.setState({openSendModal: true});
-  }
+    this.setState({ openSendModal: true });
+  };
 
   _handleClose = () => {
-    this.setState({openSendModal: false});
-  }
+    this.setState({ openSendModal: false });
+  };
 
   _handleChange = emails => event => {
     this.setState({
-      emails: event.target.value
+      emails: event.target.value,
     });
-  }
+  };
 
   _handleSubmit = () => {
-    // horozco15+1@gmail.com,horozco15+2@gmail.com,horozco15+3@gmail.com
-    const headers = {
-      headers: {
-        Authorization: getAccessToken()
-      }
-    };
-    var message = undefined
-    axios
-      .post(URLS.INVITATIONS, { emails: this.state.emails }, headers )
-        .then(({data}) => {
-          if (data.errors.length > 1) {
-            message = data.errors.map((error) => { return error.email[0] }).join('-');
-          }
-          this._getAllInvitations();
-          this.setState({
-            openSendModal: false,
-            emails: "",
-            showMessage: true,
-            message: message || 'Se han enviado ' +  data.invitations.length + ' invitaciones'
-          })
-        })
-        .catch((error) => {
-          this.setState({
-            emails: "",
-            showMessage: true,
-            message: "error" + error,
-            openSendModal: false
-          });
+    var message = undefined;
+    client
+      .post(URLS.INVITATIONS, { emails: this.state.emails })
+      .then(({ data }) => {
+        if (data.errors.length >= 1) {
+          message = data.errors
+            .map(error => {
+              return error.email[0];
+            })
+            .join('-');
+        }
+        this._getAllInvitations();
+        this.setState({
+          openSendModal: false,
+          emails: '',
+          showMessage: true,
+          message:
+            message ||
+            'Se han enviado ' + data.invitations.length + ' invitaciones',
         });
-  }
+      })
+      .catch(error => {
+        this.setState({
+          emails: '',
+          showMessage: true,
+          message: 'error' + error,
+          openSendModal: false,
+        });
+      });
+  };
 
   render() {
     const {
@@ -99,36 +139,94 @@ class Invitations extends React.Component {
       showMessage,
       message,
       openSendModal,
-      emails
+      emails,
     } = this.state;
 
-    if(status == 'loading') {
-      return <h1>Cargando...</h1>
+    if (status == 'loading') {
+      return <h1>Cargando...</h1>;
     }
 
     return (
       <React.Fragment>
         <Grid container>
           <ItemGrid xs={12} sm={12} md={12}>
-            {
-              invitations ? (
-                <RegularCard
-                  cardTitle='Invitaciones enviadas'
-                  cardSubtitle='Estas son las invitaciones que has enviado.'
-                  content={
-                    <Table
-                      tableHeaderColor='primary'
-                      tableHead={['#', 'Email', 'Código', '¿Aceptado?', 'Email Utilizado', 'Fecha de activación', 'Fecha de envío']}
-                      tableData={invitations.map((invitation, index)=>{
-                        return [index + 1, invitation.email, invitation.code, invitation.accepted ? 'Sí' : 'No', invitation.email_accepted, invitation.accepted_at, invitation.sent_at]
-                      })}
-                    />
-                  }
-                />
-              ) : ''
-            }
+            {invitations ? (
+              <RegularCard
+                cardTitle="Invitaciones enviadas"
+                cardSubtitle="Estas son las invitaciones que has enviado."
+                content={
+                  <ReactTable
+                    filterable
+                    columns={[
+                      {
+                        Header: 'Email',
+                        accessor: 'email',
+                        id: 'email',
+                      },
+                      {
+                        Header: 'Código',
+                        accessor: 'code',
+                        id: 'code',
+                      },
+                      {
+                        Header: '¿Aceptada?',
+                        id: 'accept',
+                        filterable: false,
+                        accessor: invitation =>
+                          invitation.accepted ? 'Sí' : 'No',
+                      },
+                      {
+                        Header: 'Email Utilizado',
+                        accessor: 'email_accepted',
+                      },
+                      {
+                        Header: 'Fecha de activación',
+                        accessor: 'accepted_at',
+                      },
+                      {
+                        Header: 'Fecha de envío',
+                        accessor: 'sent_at',
+                      },
+                      {
+                        Header: 'Revocado',
+                        id: 'revoked',
+                        filterable: false,
+                        accessor: invitation =>
+                          invitation.revoked ? 'Sí' : 'No',
+                      },
+                      {
+                        Header: 'Opciones',
+                        id: 'options',
+                        filterable: false,
+                        accessor: invitation =>
+                          invitation.revoked ? null : (
+                            <IconButton
+                              key="close"
+                              aria-label="Close"
+                              color="inherit"
+                              onClick={() => this._revokeToken(invitation.id)}
+                            >
+                              <Close />
+                            </IconButton>
+                          ),
+                      },
+                    ]}
+                    data={invitations}
+                  />
+                }
+              />
+            ) : (
+              ''
+            )}
           </ItemGrid>
-          <Button onClick={this._handleClickSend} variant="fab" color="info" aria-label="sendInvitation" customClasses="floating-button" round>
+          <Button
+            onClick={this._handleClickSend}
+            variant="fab"
+            color="info"
+            aria-label="sendInvitation"
+            customClasses="floating-button"
+            round
+          >
             <SendIcon />
           </Button>
         </Grid>
@@ -139,7 +237,9 @@ class Invitations extends React.Component {
           <DialogTitle id="form-dialog-title">Enviar Códigos</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Digite los correos electrónicos a los cuales desea enviar los códigos de acceso de la aplicación. Debe separar los correos por comas(,)
+              Digite los correos electrónicos a los cuales desea enviar los
+              códigos de acceso de la aplicación. Debe separar los correos por
+              comas(,)
             </DialogContentText>
             <TextField
               autoFocus
@@ -162,7 +262,7 @@ class Invitations extends React.Component {
           </DialogActions>
         </Dialog>
         <Snackbar
-          anchorOrigin={{vertical: 'top', horizontal: 'left'}}
+          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
           open={showMessage}
           onClose={this._handleErrorMessageClose}
           message={<span>{this.state.message}</span>}
@@ -178,7 +278,7 @@ class Invitations extends React.Component {
           ]}
         />
       </React.Fragment>
-    )
+    );
   }
 }
 

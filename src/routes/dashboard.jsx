@@ -5,10 +5,12 @@ import UserShow from 'views/Users/UserShow.jsx';
 import Settings from 'views/Settings/Settings.jsx';
 import Codes from 'views/Codes/Codes.jsx';
 import Invitations from 'views/Invitations/Invitations.jsx';
+import Authors from 'views/Authors/Authors.jsx';
 
 import {
   Dashboard,
   Person,
+  People,
   Fingerprint,
   LibraryBooks,
   Email
@@ -55,12 +57,12 @@ const dashboardRoutes = [
     component: Invitations
   },
   {
-    path: '/books',
-    pathRegex: /^\/books$/,
-    sidebarName: 'Contenido',
-    navbarName: 'Contenido',
-    icon: LibraryBooks,
-    component: () => <h1>Coming soon...</h1>
+    path: '/authors',
+    pathRegex: /^\/authors$/,
+    sidebarName: 'Autores',
+    navbarName: 'Autores',
+    icon: People,
+    component: Authors
   },
   {
     path: '/settings',
