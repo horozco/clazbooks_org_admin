@@ -6,6 +6,7 @@ import Settings from 'views/Settings/Settings.jsx';
 import Codes from 'views/Codes/Codes.jsx';
 import Invitations from 'views/Invitations/Invitations.jsx';
 import Authors from 'views/Authors/Authors.jsx';
+import Books from 'views/Books/Books.jsx';
 
 import {
   Dashboard,
@@ -63,6 +64,14 @@ const dashboardRoutes = [
     navbarName: 'Autores',
     icon: People,
     component: Authors
+  },
+  {
+    path: '/books',
+    pathRegex: /^\/books$/,
+    sidebarName: 'Libros',
+    navbarName: 'Libros',
+    icon: LibraryBooks,
+    component: Books
   },
   {
     path: '/settings',

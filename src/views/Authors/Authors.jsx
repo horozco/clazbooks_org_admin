@@ -62,7 +62,7 @@ class Books extends React.Component {
     this.setState({ showMessage: false, message: '' });
   };
 
-  _handleClickSend = () => {
+  _handleClickSave = () => {
     this.setState({ openFormModal: true });
   };
 
@@ -235,10 +235,10 @@ class Books extends React.Component {
             )}
           </ItemGrid>
           <Button
-            onClick={this._handleClickSend}
+            onClick={this._handleClickSave}
             variant="fab"
             color="info"
-            aria-label="sendInvitation"
+            aria-label="saveAuthor"
             customClasses="floating-button"
             round
           >

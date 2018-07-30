@@ -10,6 +10,7 @@ const URLS = {
   INVITATIONS: `/organization_admin/invitations/`,
   BOOKS: `/organization_admin/books/`,
   AUTHORS: `/organization_admin/authors/`,
+  CATEGORIES: `/organization_admin/categories/`,
 }
 
 export default URLS
