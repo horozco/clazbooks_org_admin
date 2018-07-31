@@ -100,6 +100,7 @@ class Books extends React.Component {
       image: '',
       isSubmitting: false,
       showMessage: true,
+      editForm: false,
       message: message || 'Se ha guardado el autor.',
     });
   };

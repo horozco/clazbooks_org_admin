@@ -147,15 +147,17 @@ class Books extends React.Component {
         })
         .join('-');
     }
-    this._getAllBooks();
-    this.setState({
-      openFormModal: false,
-      currentBook: { id: null, name: '', original_name: '', short_description: '', author_id: '', categories: [], published: null, thumbnail_image_url: '' },
-      image: '',
-      isSubmitting: false,
-      showMessage: true,
-      message: message || 'Se ha guardado el libro.',
-    });
+    this._getAllBooks().then( () => {
+      this.setState({
+        openFormModal: false,
+        currentBook: { id: null, name: '', original_name: '', short_description: '', author_id: '', categories: [], published: null, thumbnail_image_url: '' },
+        image: '',
+        isSubmitting: false,
+        showMessage: true,
+        editForm: false,
+        message: message || 'Se ha guardado el libro.',
+      });
+    })
   };
 
   _handleError = errorMessage => {
@@ -218,7 +220,6 @@ class Books extends React.Component {
           : URLS.BOOKS;
 
         if (this.name.value || this.image.value) {
-          debugger;
           client[method](url, formData)
             .then(({ data }) => {
               this._successSave(data);
@@ -236,7 +237,7 @@ class Books extends React.Component {
   _handleEdit = book => event => {
     event.preventDefault();
     this.setState({
-      currentBook: { ...book },
+      currentBook: { ...book, categories: book.categories.map(category => category.id) },
       openFormModal: true,
       editForm: true,
     });
@@ -313,10 +314,9 @@ class Books extends React.Component {
                         filterable: false,
                         accessor: book =>
                           book.organization_id === currentOrganizationId ? (
-                            null
-                            // <a href="#" onClick={this._handleEdit(book)}>
-                            //   Editar
-                            // </a>
+                            <a href="#" onClick={this._handleEdit(book)}>
+                              Editar
+                            </a>
                           ) : null,
                       },
                     ]}
@@ -398,7 +398,7 @@ class Books extends React.Component {
               <FormControl style={{minWidth: '290px'}}>
                <InputLabel htmlFor="age-simple">Autor</InputLabel>
                <Select
-                 value={currentBook.author_id}
+                 value={this.state.editForm ?  (currentBook.author && currentBook.author.id) : currentBook.author_id }
                  onChange={this._handleChange('author_id')}
                  name='author_id'
                  inputRef={ref => (this.author_id = ref)}
