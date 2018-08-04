@@ -314,9 +314,13 @@ class Books extends React.Component {
                         filterable: false,
                         accessor: book =>
                           book.organization_id === currentOrganizationId ? (
-                            <a href="#" onClick={this._handleEdit(book)}>
-                              Editar
-                            </a>
+                            <React.Fragment>
+                              <a href="#" onClick={this._handleEdit(book)}>
+                                Editar
+                              </a>  
+                              {' - '}
+                              <Link to={`/readers/${book.id}`}>Contenido</Link>
+                            </React.Fragment>
                           ) : null,
                       },
                     ]}

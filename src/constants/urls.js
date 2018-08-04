@@ -11,6 +11,7 @@ const URLS = {
   BOOKS: `/organization_admin/books/`,
   AUTHORS: `/organization_admin/authors/`,
   CATEGORIES: `/organization_admin/categories/`,
+  READERS: `/organization_admin/new_readers/`,
 }
 
 export default URLS

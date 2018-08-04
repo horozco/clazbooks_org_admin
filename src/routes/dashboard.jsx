@@ -7,6 +7,7 @@ import Codes from 'views/Codes/Codes.jsx';
 import Invitations from 'views/Invitations/Invitations.jsx';
 import Authors from 'views/Authors/Authors.jsx';
 import Books from 'views/Books/Books.jsx';
+import Readers from 'views/Readers/Readers.jsx';
 
 import {
   Dashboard,
@@ -79,6 +80,13 @@ const dashboardRoutes = [
     navbarName: 'Configuración',
     noSidebar: true,
     component: Settings
+  },
+  {
+    path: '/readers/:id',
+    pathRegex: /^\/readers\/\d*$/,
+    navbarName: 'Contenido',
+    noSidebar: true,
+    component: Readers
   },
   { redirect: true, path: '/', pathRegex: /^\/$/, to: '/login', navbarName: 'Redirect' }
 ];
