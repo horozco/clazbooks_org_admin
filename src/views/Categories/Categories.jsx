@@ -24,27 +24,27 @@ import SaveIcon from '@material-ui/icons/Save';
 import Cancel from '@material-ui/icons/Cancel';
 import Close from '@material-ui/icons/Close';
 
-class Authors extends React.Component {
+class Categories extends React.Component {
   state = {
     status: 'loading',
     message: '',
-    currentAuthor: { id: null, name: '', s3_image_url: '' },
+    currentCategory: { id: null, name: '', s3_image_url: '' },
     organization_id: '',
     image: '',
     editForm: false,
     openFormModal: false,
     showMessage: false,
     isSubmitting: false,
-    authors: [],
+    categories: [],
   };
 
   componentDidMount() {
-    this._getAllAuthors();
+    this._getAllCategories();
   }
 
-  _getAllAuthors = () => {
+  _getAllCategories = () => {
     return client
-      .get(URLS.AUTHORS)
+      .get(URLS.CATEGORIES)
       .then(({ data }) => {
         this.setState({
           ...data,
@@ -69,7 +69,7 @@ class Authors extends React.Component {
   _handleClose = () => {
     this.setState({
       openFormModal: false,
-      currentAuthor: { id: null, name: '', s3_image_url: '' },
+      currentCategory: { id: null, name: '', s3_image_url: '' },
       image: '',
       editForm: false,
     });
@@ -77,8 +77,8 @@ class Authors extends React.Component {
 
   _handleChange = field => event => {
     this.setState({
-      currentAuthor: {
-        ...this.state.currentAuthor,
+      currentCategory: {
+        ...this.state.currentCategory,
         [field]: event.target.value,
       },
     });
@@ -93,21 +93,21 @@ class Authors extends React.Component {
         })
         .join('-');
     }
-    this._getAllAuthors();
+    this._getAllCategories();
     this.setState({
       openFormModal: false,
-      currentAuthor: { id: null, name: '', s3_image_url: '' },
+      currentCategory: { id: null, name: '', s3_image_url: '' },
       image: '',
       isSubmitting: false,
       showMessage: true,
       editForm: false,
-      message: message || 'Se ha guardado el autor.',
+      message: message || 'Se ha guardado la categoría.',
     });
   };
 
   _handleError = errorMessage => {
     this.setState({
-      currentAuthor: { id: null, name: '', s3_image_url: '' },
+      currentCategory: { id: null, name: '', s3_image_url: '' },
       image: '',
       success: true,
       showMessage: true,
@@ -126,18 +126,22 @@ class Authors extends React.Component {
       () => {
         const formData = new FormData();
         if (this.name.value) {
-          formData.append('author[name]', this.name.value);
+          formData.append('category[name]', this.name.value);
+        }
+
+        if (this.name.value) {
+          formData.append('category[tag]', this.name.value.toLowerCase());
         }
 
         if (this.image.value) {
-          formData.append('author[image]', this.image.files[0]);
+          formData.append('category[image]', this.image.files[0]);
         }
 
-        formData.append('author[organization_id]', organizationId);
+        formData.append('category[organization_id]', organizationId);
         const method = this.state.editForm ? 'put' : 'post';
         const url = this.state.editForm
-          ? `${URLS.AUTHORS}${this.state.currentAuthor.id}`
-          : URLS.AUTHORS;
+          ? `${URLS.CATEGORIES}${this.state.currentCategory.id}`
+          : URLS.CATEGORIES;
 
         if (this.name.value || this.image.value) {
           client[method](url, formData)
@@ -157,7 +161,7 @@ class Authors extends React.Component {
   _handleEdit = author => event => {
     event.preventDefault();
     this.setState({
-      currentAuthor: { ...author },
+      currentCategory: { ...author },
       openFormModal: true,
       editForm: true,
     });
@@ -166,11 +170,11 @@ class Authors extends React.Component {
   render() {
     const {
       status,
-      authors,
+      categories,
       showMessage,
       message,
       openFormModal,
-      currentAuthor,
+      currentCategory,
       image,
       isSubmitting,
     } = this.state;
@@ -185,10 +189,10 @@ class Authors extends React.Component {
       <React.Fragment>
         <Grid container>
           <ItemGrid xs={12} sm={12} md={12}>
-            {authors ? (
+            {categories ? (
               <RegularCard
-                cardTitle="Autores"
-                cardSubtitle="Estos son los autores creados en clazbooks. Sólo puedes editar los que has creado."
+                cardTitle="Categorías"
+                cardSubtitle="Estas son las Categorías creadas en clazbooks. Sólo puedes editar las que ha creado tu organización."
                 content={
                   <ReactTable
                     filterable
@@ -197,8 +201,8 @@ class Authors extends React.Component {
                         Header: 'Foto',
                         id: 's3_image_url',
                         filterable: false,
-                        accessor: author =>
-                          author.s3_image_url ? (
+                        accessor: category =>
+                          category.s3_image_url ? (
                             <img
                               style={{
                                 width: '45px',
@@ -206,7 +210,7 @@ class Authors extends React.Component {
                                 margin: '0 auto',
                                 display: 'inherit',
                               }}
-                              src={author.s3_image_url}
+                              src={category.s3_image_url}
                             />
                           ) : null,
                       },
@@ -219,15 +223,15 @@ class Authors extends React.Component {
                         Header: 'Opciones',
                         id: 'options',
                         filterable: false,
-                        accessor: author =>
-                          author.organization_id === currentOrganizationId ? (
-                            <a href="#" onClick={this._handleEdit(author)}>
+                        accessor: category =>
+                          category.organization_id === currentOrganizationId ? (
+                            <a href="#" onClick={this._handleEdit(category)}>
                               Editar
                             </a>
                           ) : null,
                       },
                     ]}
-                    data={authors}
+                    data={categories}
                   />
                 }
               />
@@ -252,11 +256,11 @@ class Authors extends React.Component {
         >
           <form onSubmit={this._handleSubmit(currentOrganizationId)}>
             <DialogTitle id="form-dialog-title">
-              {this.state.editForm ? 'Editar Autor' : 'Crear Autor'}
+              {this.state.editForm ? 'Editar Categoría' : 'Crear Categoría'}
             </DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Ingrese la información del autor que desea crear o modificar.
+                Ingrese la información del Categoría que desea crear o modificar.
               </DialogContentText>
               <div>
                 {this.state.editForm ? (
@@ -267,25 +271,25 @@ class Authors extends React.Component {
                       margin: '0 auto',
                       display: 'inherit',
                     }}
-                    src={this.state.currentAuthor.s3_image_url}
+                    src={this.state.currentCategory.s3_image_url}
                   />
                 ) : null}
               </div>
               <TextField
                 autoFocus
                 id="name"
-                label="Escriba un Nuevo Nombre"
+                label="Escriba un Nombre"
                 name="name"
                 inputRef={ref => (this.name = ref)}
                 onChange={this._handleChange('name')}
-                value={currentAuthor.name}
+                value={currentCategory.name}
                 fullWidth
                 margin="normal"
               />
               <br />
               <br />
               <label>
-                <b>Imagen de perfil</b>
+                <b>Imagen</b>
               </label>
               <br />
               <input
@@ -327,4 +331,4 @@ class Authors extends React.Component {
   }
 }
 
-export default Authors;
+export default Categories;
