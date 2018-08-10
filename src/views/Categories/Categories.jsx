@@ -205,8 +205,8 @@ class Categories extends React.Component {
                           category.s3_image_url ? (
                             <img
                               style={{
-                                width: '45px',
-                                borderRadius: '24px',
+                                width: '90%',
+                                borderRadius: '4px',
                                 margin: '0 auto',
                                 display: 'inherit',
                               }}
@@ -266,8 +266,8 @@ class Categories extends React.Component {
                 {this.state.editForm ? (
                   <img
                     style={{
-                      width: '45px',
-                      borderRadius: '24px',
+                      width: '90%',
+                      borderRadius: '4px',
                       margin: '0 auto',
                       display: 'inherit',
                     }}

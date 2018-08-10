@@ -207,6 +207,7 @@ class Authors extends React.Component {
                                 display: 'inherit',
                               }}
                               src={author.s3_image_url}
+                              alt='author'
                             />
                           ) : null,
                       },

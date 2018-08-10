@@ -136,7 +136,7 @@ class Dashboard extends React.Component {
                     ]}
                     tableData={top_user_actives.map(({user}, index) => {
                       return [
-                        index,
+                        index + 1,
                         user.name,
                         user.email,
                         user.total_time_active,

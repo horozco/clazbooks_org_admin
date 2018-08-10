@@ -140,7 +140,7 @@ class UserShow extends React.Component {
                               "Nombre"
                             ]}
                             tableData={user.most_played.map((book, index) => {
-                              return [index, book]
+                              return [index+1, book]
                             })}
                           />
                         }
@@ -159,7 +159,7 @@ class UserShow extends React.Component {
                               "Nombre"
                             ]}
                             tableData={user.most_read.map((book, index) => {
-                              return [index, book]
+                              return [index+1, book]
                             })}
                           />
                         }
