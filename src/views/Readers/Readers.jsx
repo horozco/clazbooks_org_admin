@@ -164,12 +164,6 @@ class Readers extends React.Component {
                         multiple
                         type="file"
                       />
-                      {
-                        currentContent.new_reader_images.length >= 1 ?
-                        currentContent.new_reader_images.map(image => {
-                          <img src={image.image.thumb.url} height="42" width="42"/>
-                        }) : null
-                      }
                       <br />
                       <br />
                       <Button type="submit" disabled={isSubmitting} color="primary">
