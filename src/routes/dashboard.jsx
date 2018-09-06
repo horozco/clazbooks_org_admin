@@ -3,7 +3,6 @@ import DashboardPage from 'views/Dashboard/Dashboard.jsx';
 import Users from 'views/Users/Users.jsx';
 import UserShow from 'views/Users/UserShow.jsx';
 import Settings from 'views/Settings/Settings.jsx';
-import Codes from 'views/Codes/Codes.jsx';
 import Invitations from 'views/Invitations/Invitations.jsx';
 import Authors from 'views/Authors/Authors.jsx';
 import Books from 'views/Books/Books.jsx';
