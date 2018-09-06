@@ -45,18 +45,10 @@ const dashboardRoutes = [
     component: Users
   },
   {
-    path: '/codes',
-    pathRegex: /^\/codes$/,
-    sidebarName: 'Códigos',
-    navbarName: 'Códigos',
-    icon: Fingerprint,
-    component: Codes
-  },
-  {
     path: '/emails',
     pathRegex: /^\/emails$/,
-    sidebarName: 'Enviar Códigos',
-    navbarName: 'Enviar Códigos',
+    sidebarName: 'Invitaciones',
+    navbarName: 'Invitaciones',
     icon: Email,
     component: Invitations
   },

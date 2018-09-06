@@ -164,20 +164,11 @@ class Invitations extends React.Component {
                         id: 'email',
                       },
                       {
-                        Header: 'Código',
-                        accessor: 'code',
-                        id: 'code',
-                      },
-                      {
                         Header: '¿Aceptada?',
                         id: 'accept',
                         filterable: false,
                         accessor: invitation =>
                           invitation.accepted ? 'Sí' : 'No',
-                      },
-                      {
-                        Header: 'Email Utilizado',
-                        accessor: 'email_accepted',
                       },
                       {
                         Header: 'Fecha de activación',
