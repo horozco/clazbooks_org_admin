@@ -247,6 +247,16 @@ class Books extends React.Component {
     });
   };
 
+  _filterCaseInsensitive = (filter, row) => {
+    const id = filter.pivotId || filter.id;
+    return (
+      row[id] !== undefined ?
+        String(row[id].toLowerCase()).startsWith(filter.value.toLowerCase())
+        :
+        true
+    );
+  };
+
   render() {
     const {
       status,
@@ -278,6 +288,7 @@ class Books extends React.Component {
                 content={
                   <ReactTable
                     filterable
+                    defaultFilterMethod={this._filterCaseInsensitive}
                     columns={[
                       {
                         Header: 'Foto',
@@ -420,7 +431,7 @@ class Books extends React.Component {
                     <MenuItem value={author.id}>{author.name}</MenuItem>   
                   )
                  }
-                 
+
                </Select>
               </FormControl>
               <FormControl style={{minWidth: '290px'}}>

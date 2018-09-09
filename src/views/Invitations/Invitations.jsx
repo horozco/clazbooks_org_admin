@@ -132,6 +132,16 @@ class Invitations extends React.Component {
       });
   };
 
+  _filterCaseInsensitive = (filter, row) => {
+    const id = filter.pivotId || filter.id;
+    return (
+      row[id] !== undefined ?
+        String(row[id].toLowerCase()).startsWith(filter.value.toLowerCase())
+        :
+        true
+    );
+  };
+
   render() {
     const {
       status,
@@ -157,6 +167,7 @@ class Invitations extends React.Component {
                 content={
                   <ReactTable
                     filterable
+                    defaultFilterMethod={this._filterCaseInsensitive}
                     columns={[
                       {
                         Header: 'Email',

@@ -193,6 +193,16 @@ class Categories extends React.Component {
     }
   };
 
+  _filterCaseInsensitive = (filter, row) => {
+    const id = filter.pivotId || filter.id;
+    return (
+      row[id] !== undefined ?
+        String(row[id].toLowerCase()).startsWith(filter.value.toLowerCase())
+        :
+        true
+    );
+  };
+
   render() {
     const {
       status,
@@ -222,6 +232,7 @@ class Categories extends React.Component {
                 content={
                   <ReactTable
                     filterable
+                    defaultFilterMethod={this._filterCaseInsensitive}
                     columns={[
                       {
                         Header: 'Foto',
