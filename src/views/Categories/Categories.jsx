@@ -158,13 +158,39 @@ class Categories extends React.Component {
     );
   };
 
-  _handleEdit = author => event => {
+  _handleEdit = category => event => {
     event.preventDefault();
     this.setState({
-      currentCategory: { ...author },
+      currentCategory: { ...category },
       openFormModal: true,
       editForm: true,
     });
+  };
+
+  _handleDestroy = category => event => {
+    event.preventDefault();
+    if (
+      window.confirm(
+        '¿Está seguro que desea eliminar esta categoría?.'
+      )
+    ) {
+      client
+        .delete(`${URLS.CATEGORIES}/${category.id}`)
+        .then(({ data }) => {
+          this.setState({
+            showMessage: true,
+            message: 'Se ha eliminado la categoría.',
+          }, () => {
+            this._getAllCategories();
+          });
+        })
+        .catch(err => {
+          this.setState({
+            showMessage: true,
+            message: err.response.data.message || 'Ha ocurrido un error.',
+          });
+        });
+    }
   };
 
   render() {
@@ -224,10 +250,16 @@ class Categories extends React.Component {
                         id: 'options',
                         filterable: false,
                         accessor: category =>
-                          category.organization_id === currentOrganizationId ? (
-                            <a href="#" onClick={this._handleEdit(category)}>
-                              Editar
-                            </a>
+                          category.organization && (category.organization.id === currentOrganizationId) ? (
+                            <div>
+                              <a href="#" onClick={this._handleEdit(category)}>
+                                Editar
+                              </a>
+                              |
+                              <a href="#" onClick={this._handleDestroy(category)}>
+                                Eliminar
+                              </a>
+                            </div>
                           ) : null,
                       },
                     ]}
@@ -243,7 +275,7 @@ class Categories extends React.Component {
             onClick={this._handleClickSave}
             variant="fab"
             color="info"
-            aria-label="saveAuthor"
+            aria-label="saveCategory"
             customClasses="floating-button"
             round
           >
@@ -260,7 +292,7 @@ class Categories extends React.Component {
             </DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Ingrese la información del Categoría que desea crear o modificar.
+                {this.state.editForm ? 'Ingrese la información de la Categoría que desea modificar.' : 'Ingrese la información de la Categoría que desea crear.'}
               </DialogContentText>
               <div>
                 {this.state.editForm ? (
@@ -289,7 +321,7 @@ class Categories extends React.Component {
               <br />
               <br />
               <label>
-                <b>Imagen</b>
+                <b>Elegir imagen para categoría</b>
               </label>
               <br />
               <input

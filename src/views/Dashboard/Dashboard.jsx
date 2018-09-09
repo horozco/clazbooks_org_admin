@@ -86,7 +86,7 @@ class Dashboard extends React.Component {
             <StatsCard
               icon={Fingerprint}
               iconColor="red"
-              title="Códigos Generados"
+              title="Invitaciones Enviadas"
               description={codes_generated}
               small=""
               statIcon={Fingerprint}
@@ -98,7 +98,7 @@ class Dashboard extends React.Component {
             <StatsCard
               icon={DoneAll}
               iconColor="orange"
-              title="Códigos Usados"
+              title="Invitaciones Activadas"
               description={codes_used}
               statIcon={DoneAll}
               statText="Códigos usados por usuarios."
@@ -108,10 +108,10 @@ class Dashboard extends React.Component {
             <StatsCard
               icon={Done}
               iconColor="green"
-              title="Códigos Disponibles"
+              title="Invitaciones Disponibles"
               description={codes_remaining}
               statIcon={Done}
-              statText="Códigos disponibles para generar."
+              statText="Invitaciones disponibles para enviar."
             />
           </ItemGrid>
         </Grid>
@@ -132,7 +132,7 @@ class Dashboard extends React.Component {
                       "Tiempo Activo",
                       "Más escuchado",
                       "Más Leído",
-                      "Acciones"
+                      "Más información"
                     ]}
                     tableData={top_user_actives.map(({user}, index) => {
                       return [
@@ -142,7 +142,7 @@ class Dashboard extends React.Component {
                         user.total_time_active,
                         user.most_played[0],
                         user.most_read[0],
-                        <Link to={`/users/${user.id}`}>Ver</Link>
+                        <Link to={`/users/${user.id}`}>Ver más</Link>
                       ];
                     })}
                   />

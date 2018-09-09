@@ -39,11 +39,10 @@ class HeaderLinks extends React.Component {
             color="inherit"
             aria-label="Configuración"
             className={classes.buttonLink}
+            style={{width: '120px'}}
           >
-            <Settings className={classes.links} />
-            <Hidden mdUp>
-              <p className={classes.linkText}>Configuración</p>
-            </Hidden>
+            <Settings className={classes.links} style={{marginRight: '14px'}}/>
+            <p className={classes.linkText}>Ajustes</p>
           </IconButton>
         </Link>
       </div>

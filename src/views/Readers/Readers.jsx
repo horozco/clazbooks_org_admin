@@ -143,7 +143,7 @@ class Readers extends React.Component {
       <Grid container>
         <ItemGrid xs={12} sm={12} md={12}>
           <RegularCard
-            cardTitle="Contenido"
+            cardTitle={`Contenido para ${currentContent.book.name}`}
             content={
               <div>
                 <Grid container>

@@ -225,11 +225,11 @@ class Invitations extends React.Component {
           open={this.state.openSendModal}
           aria-labelledby="form-dialog-title"
         >
-          <DialogTitle id="form-dialog-title">Enviar Códigos</DialogTitle>
+          <DialogTitle id="form-dialog-title">Enviar Invitaciones</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Digite los correos electrónicos a los cuales desea enviar los
-              códigos de acceso de la aplicación. Debe separar los correos por
+              Digite los correos electrónicos a los cuales desea enviar las
+              invitaciones para acceso a la aplicación. Debe separar los correos por
               comas(,)
             </DialogContentText>
             <TextField

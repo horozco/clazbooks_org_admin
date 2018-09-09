@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import {
   Grid,
   Dialog,
@@ -140,6 +141,7 @@ class Books extends React.Component {
 
   _successSave = data => {
     var message = '';
+    var newBookId = data.book && data.book.id;
     if (data.errors && data.errors.length >= 1) {
       message = data.errors
         .map(error => {
@@ -156,6 +158,8 @@ class Books extends React.Component {
         showMessage: true,
         editForm: false,
         message: message || 'Se ha guardado el libro.',
+      }, () => {
+        this.props.history.push(`/readers/${newBookId}`);
       });
     })
   };
@@ -349,11 +353,11 @@ class Books extends React.Component {
         >
           <form onSubmit={this._handleSubmit(currentOrganizationId)}>
             <DialogTitle id="form-dialog-title">
-              {this.state.editForm ? 'Editar Libro' : 'Crear Libro'}
+              {this.state.editForm ? 'Editar Libro' : 'Crear Nuevo Libro'}
             </DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Ingrese la iformación del libro que desea crear o modificar.
+                {this.state.editForm ? 'Ingrese la información del libro que desea modificar.' : 'Ingrese la información del libro que desea crear.'}
               </DialogContentText>
               <div>
                 {this.state.editForm ? (
@@ -416,6 +420,7 @@ class Books extends React.Component {
                     <MenuItem value={author.id}>{author.name}</MenuItem>   
                   )
                  }
+                 
                </Select>
               </FormControl>
               <FormControl style={{minWidth: '290px'}}>
@@ -456,8 +461,8 @@ class Books extends React.Component {
               <br />
               <label>
                 <b>Carátula</b>
+                <small style={{display: 'block'}}>Puedes dejarla en blanco si no tienes una a la mano.</small>
               </label>
-              <br />
               <input
                 ref={el => (this.image = el)}
                 accept="image/*"
@@ -469,8 +474,8 @@ class Books extends React.Component {
               <br />
               <label>
                 <b>Audio</b>
+                <small style={{display: 'block'}}>Puedes dejarlo en blanco si no tienes uno a la mano.</small>
               </label>
-              <br />
               <input
                 ref={el => (this.audio = el)}
                 accept="audio/*"
@@ -484,7 +489,7 @@ class Books extends React.Component {
                 <Cancel /> Cancelar
               </Button>
               <Button type="submit" disabled={isSubmitting} color="primary">
-                <SaveIcon /> Guardar
+                <SaveIcon /> Siguiente
               </Button>
             </DialogActions>
           </form>
@@ -510,4 +515,4 @@ class Books extends React.Component {
   }
 }
 
-export default Books;
+export default withRouter(Books);

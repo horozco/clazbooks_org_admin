@@ -130,7 +130,7 @@ class UserShow extends React.Component {
                     <ItemGrid xs={12} sm={12} md={6}>
                       <RegularCard
                         headerColor="orange"
-                        cardTitle="Más Escuchados"
+                        cardTitle="Escuchados"
                         cardSubtitle="Libros que más ha escuchado este usuario."
                         content={
                           <Table
@@ -149,7 +149,7 @@ class UserShow extends React.Component {
                     <ItemGrid xs={12} sm={12} md={6}>
                       <RegularCard
                         headerColor="orange"
-                        cardTitle="Más Leídos"
+                        cardTitle="Leídos"
                         cardSubtitle="Libros que más ha leido este usuario."
                         content={
                           <Table

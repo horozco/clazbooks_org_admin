@@ -23,8 +23,8 @@ const dashboardRoutes = [
   {
     path: '/dashboard',
     pathRegex: /^\/dashboard$/,
-    sidebarName: 'Dashboard',
-    navbarName: 'Dashboard',
+    sidebarName: 'Inicio',
+    navbarName: 'Inicio',
     icon: Dashboard,
     component: DashboardPage
   },
