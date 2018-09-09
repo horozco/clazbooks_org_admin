@@ -171,7 +171,7 @@ class Categories extends React.Component {
     event.preventDefault();
     if (
       window.confirm(
-        '¿Está seguro que desea eliminar esta categoría?.'
+        '¿Está seguro que desea eliminar esta categoría?'
       )
     ) {
       client
@@ -266,7 +266,7 @@ class Categories extends React.Component {
                               <a href="#" onClick={this._handleEdit(category)}>
                                 Editar
                               </a>
-                              |
+                              {' - '}
                               <a href="#" onClick={this._handleDestroy(category)}>
                                 Eliminar
                               </a>

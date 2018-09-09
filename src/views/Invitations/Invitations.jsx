@@ -190,11 +190,11 @@ class Invitations extends React.Component {
                         accessor: 'sent_at',
                       },
                       {
-                        Header: 'Revocado',
+                        Header: 'Status',
                         id: 'revoked',
                         filterable: false,
                         accessor: invitation =>
-                          invitation.revoked ? 'Sí' : 'No',
+                          invitation.revoked ? 'Desactivo' : 'Activo',
                       },
                       {
                         Header: 'Opciones',

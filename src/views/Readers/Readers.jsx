@@ -18,7 +18,7 @@ class Readers extends React.Component {
   state = {
     status: 'loading',
     success: false,
-    mdContent: "# Frase principal del libro - Texto grande nivel 1\r\n\r\n---\r\n(separador)\r\n\r\nEsto es un párrafo normal. texto normal __que puede__ _tener_ multiples <u>formatos</u>.\r\n\r\nTexto normal __que puede__ _tener_ multiples <u>formatos</u>. Texto normal __que puede__ _tener_ multiples <u>formatos</u>\r\n\r\n## Bloque de texto más grande de nivel 2 que puede tener la cantidad deseada de texto pero que no puede contener saltos de línea, si hacemos un salto de línea, ya pierde el formato.\r\n\r\n### Bloque de texto más grande de nivel 3 que puede tener la cantidad deseada de texto pero que no puede contener saltos de línea, si hacemos un salto de línea, ya pierde el formato.\r\n\r\n#### Bloque de texto más grande de nivel 4 que puede tener la cantidad deseada de texto pero que no puede contener saltos de línea, si hacemos un salto de línea, ya pierde el formato.\r\n\r\n__Más texto__ is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.\r\n\r\n---\r\n\r\n1. Item 1\r\n2. Item 2\r\n3. Item 3 \r\n\r\n---\r\n\r\n* Item 1\r\n* Item 2\r\n* Item 3 \r\n\r\n> Frases con números __romanos__\r\n\r\n---\r\n\r\n> Frases con números romanos\r\n\r\n> Frases con números romanos\r\n\r\n> Frases con números romanos\r\n\r\nMás texto se puede colocar aquí.",
+    mdContent: "# Escribe aqui la frase incial\r\n\r\n---\r\n(estos tres guiones representan un separador, puedes colocar tantos como desees)\r\n\r\nEsto es un párrafo normal. texto normal __que puede__ _tener_ multiples <u>formatos</u>.\r\nTexto normal __que puede__ _tener_ multiples <u>formatos</u>. Texto normal __que puede__ _tener_ multiples <u>formatos</u>\r\n\r\n1. También\r\n2. Puedes Hacer\r\n3. Numeración\r\n\r\n> El texto que se muestra después de este símbolo\r\n> Será mostrado como números romanos\r\n> Se puede utilizar para hacer quotes\r\n\r\nPues escribir mas texto __aquí__ \r\n\r\nsi necesitas un link solo abre corchetes y luego paréntesis, así:\r\n\r\n[Texto link](http://google.com)\r\n\r\nEn los corchetes va el texto del link, en los paréntesis va el link\r\n",
     images: '',
     currentContent: {},
     isSubmitting: false,
@@ -55,7 +55,7 @@ class Readers extends React.Component {
       isSubmitting: true
     }, () => {
       const formData = new FormData();
-      
+
       if (this.md_content.value) {
         formData.append("new_reader[md_content]", this.md_content.value);
       }
@@ -68,7 +68,7 @@ class Readers extends React.Component {
 
       const method = this.state.currentContent.id ? 'put' : 'post';
       const url = this.state.currentContent.id
-        ? `${URLS.READERS}${this.state.currentContent.id}`
+        ? `${URLS.READERS}${this.state.currentContent.book_id}`
         : URLS.READERS;
 
       client[method](url, formData)

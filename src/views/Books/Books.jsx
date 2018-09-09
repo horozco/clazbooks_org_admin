@@ -78,7 +78,6 @@ class Books extends React.Component {
       .then(({ data }) => {
         this.setState({
           ...data,
-          status: 'success',
         });
       })
       .catch(() => {
@@ -94,7 +93,6 @@ class Books extends React.Component {
       .then(({ data }) => {
         this.setState({
           ...data,
-          status: 'success',
         });
       })
       .catch(() => {
@@ -148,31 +146,33 @@ class Books extends React.Component {
           return error;
         })
         .join('-');
+      this._handleError(`Ha ocurrido un error: ${message}`, false);
+    } else {
+      this._getAllBooks().then( () => {
+        this.setState({
+          openFormModal: false,
+          currentBook: { id: null, name: '', original_name: '', short_description: '', author_id: '', categories: [], published: null, thumbnail_image_url: '' },
+          image: '',
+          isSubmitting: false,
+          showMessage: true,
+          editForm: false,
+          message: message || 'Se ha guardado el libro.',
+        }, () => {
+          this.props.history.push(`/readers/${newBookId}`);
+        });
+      })
     }
-    this._getAllBooks().then( () => {
-      this.setState({
-        openFormModal: false,
-        currentBook: { id: null, name: '', original_name: '', short_description: '', author_id: '', categories: [], published: null, thumbnail_image_url: '' },
-        image: '',
-        isSubmitting: false,
-        showMessage: true,
-        editForm: false,
-        message: message || 'Se ha guardado el libro.',
-      }, () => {
-        this.props.history.push(`/readers/${newBookId}`);
-      });
-    })
   };
 
-  _handleError = errorMessage => {
+  _handleError = (errorMessage, hideModal=true) => {
     this.setState({
-      currentBook: { id: null, name: '', original_name: '', short_description: '', author_id: '', categories: [], published: null, thumbnail_image_url: '' },
+      currentBook: hideModal ? { id: null, name: '', original_name: '', short_description: '', author_id: '', categories: [], published: null, thumbnail_image_url: '' } : this.state.currentBook,
       image: '',
       success: true,
       showMessage: true,
       isSubmitting: false,
       message: errorMessage,
-      openFormModal: false,
+      openFormModal: !hideModal,
     });
   };
 
@@ -257,6 +257,32 @@ class Books extends React.Component {
     );
   };
 
+  _handleDestroy = book => event => {
+    event.preventDefault();
+    if (
+      window.confirm(
+        '¿Está seguro que desea eliminar este libro?'
+      )
+    ) {
+      client
+        .delete(`${URLS.BOOKS}/${book.id}`)
+        .then(({ data }) => {
+          this.setState({
+            showMessage: true,
+            message: 'Se ha eliminado el libro.',
+          }, () => {
+            this._getAllBooks();
+          });
+        })
+        .catch(err => {
+          this.setState({
+            showMessage: true,
+            message: err.response.data.message || 'Ha ocurrido un error.',
+          });
+        });
+    }
+  };
+
   render() {
     const {
       status,
@@ -287,6 +313,7 @@ class Books extends React.Component {
                 cardSubtitle="Estos son los libros de la plataforma."
                 content={
                   <ReactTable
+                    loading={this.state.status === 'loading'}
                     filterable
                     defaultFilterMethod={this._filterCaseInsensitive}
                     columns={[
@@ -334,7 +361,9 @@ class Books extends React.Component {
                                 Editar
                               </a>  
                               {' - '}
-                              <Link to={`/readers/${book.id}`}>Contenido</Link>
+                              <a href="#" onClick={this._handleDestroy(book)}>
+                                Eliminar
+                              </a>
                             </React.Fragment>
                           ) : null,
                       },
@@ -364,7 +393,11 @@ class Books extends React.Component {
         >
           <form onSubmit={this._handleSubmit(currentOrganizationId)}>
             <DialogTitle id="form-dialog-title">
-              {this.state.editForm ? 'Editar Libro' : 'Crear Nuevo Libro'}
+              {this.state.editForm ? 'Editar Libro - ' : 'Crear Nuevo Libro'}
+              {
+                currentBook.id ?
+                  <Link to={`/readers/${currentBook.id}`}>Contenido</Link> : ''
+              }
             </DialogTitle>
             <DialogContent>
               <DialogContentText>
