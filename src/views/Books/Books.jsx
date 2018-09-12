@@ -48,11 +48,11 @@ class Books extends React.Component {
   };
 
   componentDidMount() {
-    
+
     this._getAllCategories().then(() => {
       this._getAllAuthors().then(() => {
         this._getAllBooks();
-      });  
+      });
     })
   }
 
@@ -359,7 +359,7 @@ class Books extends React.Component {
                             <React.Fragment>
                               <a href="#" onClick={this._handleEdit(book)}>
                                 Editar
-                              </a>  
+                              </a>
                               {' - '}
                               <a href="#" onClick={this._handleDestroy(book)}>
                                 Eliminar
@@ -460,8 +460,8 @@ class Books extends React.Component {
                  }}
                >
                  {
-                  authors.map(author => 
-                    <MenuItem value={author.id}>{author.name}</MenuItem>   
+                  authors.map(author =>
+                    <MenuItem value={author.id}>{author.name}</MenuItem>
                   )
                  }
 
@@ -481,8 +481,8 @@ class Books extends React.Component {
                  }}
                >
                  {
-                  categories.map(category => 
-                    <MenuItem value={category.id}>{category.name}</MenuItem>   
+                  categories.map(category =>
+                    <MenuItem value={category.id}>{category.name}</MenuItem>
                   )
                  }
                </Select>
@@ -491,7 +491,7 @@ class Books extends React.Component {
               <br />
               <FormControlLabel
                 control={
-                  <Checkbox 
+                  <Checkbox
                     checked={currentBook.published}
                     name='published'
                     inputRef={ref => (this.published = ref)}

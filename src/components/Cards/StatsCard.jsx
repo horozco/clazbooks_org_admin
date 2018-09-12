@@ -20,10 +20,11 @@ function StatsCard({ ...props }) {
     small,
     statText,
     statIconColor,
-    iconColor
+    iconColor,
+    onClick,
   } = props;
   return (
-    <Card className={classes.card}>
+    <Card className={classes.card} onClick={onClick}>
       <CardHeader
         classes={{
           root: classes.cardHeader + " " + classes[iconColor + "CardHeader"],

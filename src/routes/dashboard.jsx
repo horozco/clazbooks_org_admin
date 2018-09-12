@@ -8,6 +8,7 @@ import Authors from 'views/Authors/Authors.jsx';
 import Books from 'views/Books/Books.jsx';
 import Readers from 'views/Readers/Readers.jsx';
 import Categories from 'views/Categories/Categories.jsx';
+import Posts from 'views/Posts/Posts.jsx';
 
 import {
   Dashboard,
@@ -16,7 +17,8 @@ import {
   Fingerprint,
   LibraryBooks,
   Bookmark,
-  Email
+  Email,
+  Web,
 } from '@material-ui/icons';
 
 const dashboardRoutes = [
@@ -74,6 +76,14 @@ const dashboardRoutes = [
     navbarName: 'Libros',
     icon: LibraryBooks,
     component: Books
+  },
+  {
+    path: '/posts',
+    pathRegex: /^\/news$/,
+    sidebarName: 'Noticias',
+    navbarName: 'Noticias',
+    icon: Web,
+    component: Posts
   },
   {
     path: '/settings',
