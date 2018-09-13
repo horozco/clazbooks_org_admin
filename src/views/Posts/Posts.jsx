@@ -29,6 +29,8 @@ import {
   TextField,
 } from "material-ui";
 
+import { SessionConsumer } from "components/Session/SessionContext.jsx";
+
 import { StatsCard, ChartCard, RegularCard, ItemGrid, Button } from "components";
 import ReactTable from 'react-table';
 
@@ -44,9 +46,8 @@ import "simplemde/dist/simplemde.min.css";
 class Posts extends React.Component {
   state = {
     status: "loading",
-    currentPost: { id: null, title: '', intro: '', body: '' },
+    currentPost: { id: null, title: '', md_content: '' },
     published_posts: 0,
-    total_read_posts: 0,
     posts: [],
     editForm: false,
     openFormModal: false,
@@ -133,7 +134,7 @@ class Posts extends React.Component {
   _handleClose = () => {
     this.setState({
       openFormModal: false,
-      currentPost: { id: null, title: '', intro: '', body: '' },
+      currentPost: { id: null, title: '', md_content: '' },
       editForm: false,
     });
   };
@@ -159,7 +160,7 @@ class Posts extends React.Component {
     this._getAllPosts();
     this.setState({
       openFormModal: false,
-      currentPost: { id: null, title: '', intro: '', body: '' },
+      currentPost: { id: null, title: '', md_content: '' },
       isSubmitting: false,
       showMessage: true,
       editForm: false,
@@ -179,12 +180,8 @@ class Posts extends React.Component {
           formData.append('post[title]', this.title.value);
         }
 
-        if (this.intro.value) {
-          formData.append('post[intro]', this.intro.value);
-        }
-
-        if (this.body.value) {
-          formData.append('post[body]', this.body.value);
+        if (this.md_content.value) {
+          formData.append("post[new_reader_attributes][md_content]", this.md_content.value);
         }
 
         const method = this.state.editForm ? 'put' : 'post';
@@ -192,7 +189,7 @@ class Posts extends React.Component {
           ? `${URLS.POSTS}${this.state.currentPost.id}`
           : URLS.POSTS;
 
-        if (this.title.value || this.intro.value || this.body.value) {
+        if (this.title.value || this.md_content.value) {
           client[method](url, formData)
             .then(({ data }) => {
               this._successSave(data);
@@ -209,7 +206,7 @@ class Posts extends React.Component {
 
   _handleError = errorMessage => {
     this.setState({
-      currentPost: { id: null, title: '', intro: '', body: '' },
+      currentPost: { id: null, title: '', intro: '', md_content: '' },
       showMessage: true,
       isSubmitting: false,
       message: errorMessage,
@@ -225,7 +222,6 @@ class Posts extends React.Component {
     const {
       status,
       published_posts,
-      total_read_posts,
       posts,
       showMessage,
       message,
@@ -240,162 +236,161 @@ class Posts extends React.Component {
     }
 
     return (
-      <div>
-        <Grid container>
-          <ItemGrid xs={12} sm={6} md={4}>
-            <StatsCard
-              icon={Fingerprint}
-              iconColor="red"
-              title="Noticias Publicadas"
-              description={published_posts}
-              small=""
-              statIcon={Fingerprint}
-              statIconColor="danger"
-              statText="Noticias de tu organización."
-            />
-          </ItemGrid>
-          <ItemGrid xs={12} sm={6} md={4}>
-            <StatsCard
-              icon={DoneAll}
-              iconColor="orange"
-              title="Noticias Leídas"
-              description={total_read_posts}
-              statIcon={DoneAll}
-              statText="Total de noticias leídas por usuarios."
-            />
-          </ItemGrid>
-          <ItemGrid xs={12} sm={6} md={4}>
-            <StatsCard
-              icon={Done}
-              iconColor="green"
-              title="Publicar Nueva Noticia"
-              description={'+'}
-              statIcon={Done}
-              statText="Agrega una nueva noticia."
-              onClick={this._handleAddNewPost}
-            />
-          </ItemGrid>
-        </Grid>
-        <Grid container>
-          <ItemGrid xs={12} sm={12} md={12}>
-            <RegularCard
-              headerColor="blue"
-              cardTitle="Noticias"
-              cardSubtitle="Estas son las noticias que has creado."
-              content={
-                <ReactTable
-                  loading={this.state.status === 'loading'}
-                  filterable
-                  defaultFilterMethod={this._filterCaseInsensitive}
-                  columns={[
-                    {
-                      Header: 'Título',
-                      id: 'title',
-                      accessor: 'title'
-                    },
-                    {
-                      Header: 'Fecha de publicación',
-                      id: 'created_at',
-                      accessor: post =>
-                        new Date(post.created_at).toLocaleString(),
-                    },
-                    {
-                      Header: 'Opciones',
-                      id: 'options',
-                      filterable: false,
-                      accessor: post =>
-                        <React.Fragment>
-                          <a href="#" onClick={this._handleUnpublish(post)}>
-                            Despublicar
-                          </a>
-                          {' - '}
-                          <a href="#" onClick={this._handleEdit(post)}>
-                            Editar
-                          </a>
-                          {' - '}
-                          <a href="#" onClick={this._handleDestroy(post)}>
-                            Eliminar
-                          </a>
-                        </React.Fragment>
-                    },
-                  ]}
-                  data={posts}
-                />
-              }
-            />
-          </ItemGrid>
-        </Grid>
+      <SessionConsumer>
+        {
+          session => (
+            <div>
+              <Grid container>
+                <ItemGrid xs={12} sm={6} md={4}>
+                  <StatsCard
+                    icon={Fingerprint}
+                    iconColor="red"
+                    title="Noticias Publicadas"
+                    description={published_posts}
+                    small=""
+                    statIcon={Fingerprint}
+                    statIconColor="danger"
+                    statText="Noticias de tu organización."
+                  />
+                </ItemGrid>
+                <ItemGrid xs={12} sm={6} md={4}>
+                  <StatsCard
+                    icon={DoneAll}
+                    iconColor="orange"
+                    title="Noticias Leídas"
+                    description={session.organization_admin.organization.posts_read_amount}
+                    statIcon={DoneAll}
+                    statText="Total de noticias leídas por usuarios."
+                  />
+                </ItemGrid>
+                <ItemGrid xs={12} sm={6} md={4}>
+                  <StatsCard
+                    icon={Done}
+                    iconColor="green"
+                    title="Publicar Nueva Noticia"
+                    description={'+'}
+                    statIcon={Done}
+                    statText="Agrega una nueva noticia."
+                    onClick={this._handleAddNewPost}
+                  />
+                </ItemGrid>
+              </Grid>
+              <Grid container>
+                <ItemGrid xs={12} sm={12} md={12}>
+                  <RegularCard
+                    headerColor="blue"
+                    cardTitle="Noticias"
+                    cardSubtitle="Estas son las noticias que has creado."
+                    content={
+                      <ReactTable
+                        loading={this.state.status === 'loading'}
+                        filterable
+                        defaultFilterMethod={this._filterCaseInsensitive}
+                        columns={[
+                          {
+                            Header: 'Título',
+                            id: 'title',
+                            accessor: 'title'
+                          },
+                          {
+                            Header: 'Fecha de publicación',
+                            id: 'created_at',
+                            accessor: post =>
+                              new Date(post.created_at).toLocaleString(),
+                          },
+                          {
+                            Header: 'Opciones',
+                            id: 'options',
+                            filterable: false,
+                            accessor: post =>
+                              <React.Fragment>
+                                <a href="#" onClick={this._handleUnpublish(post)}>
+                                  Despublicar
+                                </a>
+                                {' - '}
+                                <a href="#" onClick={this._handleEdit(post)}>
+                                  Editar
+                                </a>
+                                {' - '}
+                                <a href="#" onClick={this._handleDestroy(post)}>
+                                  Eliminar
+                                </a>
+                              </React.Fragment>
+                          },
+                        ]}
+                        data={posts}
+                      />
+                    }
+                  />
+                </ItemGrid>
+              </Grid>
 
-        <Dialog
-          open={this.state.openFormModal}
-          aria-labelledby="form-dialog-title"
-        >
-          <form onSubmit={this._handleSubmit}>
-            <DialogTitle id="form-dialog-title">
-              {this.state.editForm ? 'Editar Noticia' : 'Crear Nueva Noticia'}
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                {this.state.editForm ? 'Ingrese la información de la noticia que desea modificar.' : 'Ingrese la información de la noticia que desea crear.'}
-              </DialogContentText>
+              <Dialog
+                open={this.state.openFormModal}
+                aria-labelledby="form-dialog-title"
+              >
+                <form onSubmit={this._handleSubmit}>
+                  <DialogTitle id="form-dialog-title">
+                    {this.state.editForm ? 'Editar Noticia' : 'Crear Nueva Noticia'}
+                  </DialogTitle>
+                  <DialogContent>
+                    <DialogContentText>
+                      {this.state.editForm ? 'Ingrese la información de la noticia que desea modificar.' : 'Ingrese la información de la noticia que desea crear.'}
+                    </DialogContentText>
 
-              <TextField
-                autoFocus
-                id="title"
-                label="Título"
-                name="title"
-                inputRef={ref => (this.title = ref)}
-                onChange={this._handleChange('title')}
-                value={currentPost.title}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                id="intro"
-                label="Frase inicial"
-                name="intro"
-                inputRef={ref => (this.intro = ref)}
-                onChange={this._handleChange('intro')}
-                value={currentPost.intro}
-                fullWidth
-                margin="normal"
-              />
-              <br/>
-              <SimpleMDE
-                ref={ref => (this.body = ref)}
-                name='body'
-                value={currentPost.body}
-                onChange={this._handleChange('body')}
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={this._handleClose} color="primary">
-                <Cancel /> Cancelar
-              </Button>
-              <Button type="submit" disabled={isSubmitting} color="primary">
-                <Save /> Guardar
-              </Button>
-            </DialogActions>
-          </form>
-        </Dialog>
+                    <TextField
+                      autoFocus
+                      id="title"
+                      label="Título"
+                      name="title"
+                      inputRef={ref => (this.title = ref)}
+                      onChange={this._handleChange('title')}
+                      value={currentPost.title}
+                      fullWidth
+                      margin="normal"
+                      required
+                    />
+                    <br/>
+                    <br/>
+                    <SimpleMDE
+                      ref={ref => (this.md_content = ref)}
+                      name='md_content'
+                      value={currentPost.md_content}
+                      onChange={this._handleChange('md_content')}
+                      required
+                    />
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={this._handleClose} color="primary">
+                      <Cancel /> Cancelar
+                    </Button>
+                    <Button type="submit" disabled={isSubmitting} color="primary">
+                      <Save /> Guardar
+                    </Button>
+                  </DialogActions>
+                </form>
+              </Dialog>
 
-        <Snackbar
-          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-          open={showMessage}
-          onClose={this._handleErrorMessageClose}
-          message={<span>{this.state.message}</span>}
-          action={[
-            <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={this._handleErrorMessageClose}
-            >
-              <Close />
-            </IconButton>,
-          ]}
-        />
-      </div>
+              <Snackbar
+                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                open={showMessage}
+                onClose={this._handleErrorMessageClose}
+                message={<span>{this.state.message}</span>}
+                action={[
+                  <IconButton
+                    key="close"
+                    aria-label="Close"
+                    color="inherit"
+                    onClick={this._handleErrorMessageClose}
+                  >
+                    <Close />
+                  </IconButton>,
+                ]}
+              />
+            </div>
+          )
+        }
+      </SessionConsumer>
     );
   }
 }
