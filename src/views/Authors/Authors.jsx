@@ -198,16 +198,26 @@ class Authors extends React.Component {
             {authors ? (
               <RegularCard
                 cardTitle="Autores"
-                cardSubtitle="Estos son los autores creados en clazbooks. Sólo puedes editar los que has creado."
+                cardSubtitle="Aquí puedes ver los autores de Clazbooks, y podrás crear y editar tus autores."
                 content={
                   <ReactTable
                     filterable
                     defaultFilterMethod={this._filterCaseInsensitive}
                     columns={[
                       {
+                        Header: "#",
+                        id: "row",
+                        maxWidth: 50,
+                        filterable: false,
+                        Cell: (row) => {
+                          return <div style={{textAlign: 'center'}}>{row.index+1}</div>;
+                        }
+                      },
+                      {
                         Header: 'Foto',
                         id: 's3_image_url',
                         filterable: false,
+                        sotable: false,
                         accessor: author =>
                           author.s3_image_url ? (
                             <img
@@ -223,9 +233,15 @@ class Authors extends React.Component {
                           ) : null,
                       },
                       {
-                        Header: 'Nombre',
+                        Header: 'Nombre ⇵',
                         accessor: 'name',
                         id: 'id',
+                        Filter: ({ filter, onChange }) =>
+                          <input
+                            onChange={event => onChange(event.target.value)}
+                            style={{ width: '100%' }}
+                            placeholder='Buscar'
+                          />
                       },
                       {
                         Header: 'Opciones',

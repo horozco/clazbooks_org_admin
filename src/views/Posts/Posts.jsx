@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import {
   Done,
   DoneAll,
-  Fingerprint,
+  Web,
   DateRange,
   LocalOffer,
   Update,
@@ -13,7 +13,8 @@ import {
   Accessibility,
   Save,
   Cancel,
-  Close
+  Close,
+  AddCircleOutline
 } from "@material-ui/icons";
 
 import {
@@ -105,7 +106,7 @@ class Posts extends React.Component {
     event.preventDefault();
     if (
       window.confirm(
-        '¿Está seguro que desea eliminar esta noticia?'
+        '¿Está seguro que desea eliminar este mensaje?'
       )
     ) {
       client
@@ -113,7 +114,7 @@ class Posts extends React.Component {
         .then(({ data }) => {
           this.setState({
             showMessage: true,
-            message: 'Se ha eliminado la noticia.',
+            message: 'Se ha eliminado el mensaje.',
           }, () => {
             this._getAllPosts();
           });
@@ -164,7 +165,7 @@ class Posts extends React.Component {
       isSubmitting: false,
       showMessage: true,
       editForm: false,
-      message: message || 'Se ha guardado la noticia.',
+      message: message || 'Se ha guardado el mensaje.',
     });
   };
 
@@ -243,34 +244,34 @@ class Posts extends React.Component {
               <Grid container>
                 <ItemGrid xs={12} sm={6} md={4}>
                   <StatsCard
-                    icon={Fingerprint}
+                    icon={Done}
                     iconColor="red"
-                    title="Noticias Publicadas"
+                    title="Mensajes Publicados"
                     description={published_posts}
                     small=""
-                    statIcon={Fingerprint}
+                    statIcon={Done}
                     statIconColor="danger"
-                    statText="Noticias de tu organización."
+                    statText="Número de mensajes que has publicado."
                   />
                 </ItemGrid>
                 <ItemGrid xs={12} sm={6} md={4}>
                   <StatsCard
                     icon={DoneAll}
                     iconColor="orange"
-                    title="Noticias Leídas"
+                    title="Mensajes Leídos"
                     description={session.organization_admin.organization.posts_read_amount}
                     statIcon={DoneAll}
-                    statText="Total de noticias leídas por usuarios."
+                    statText="Número de mensajes que tus usuarios han leído."
                   />
                 </ItemGrid>
                 <ItemGrid xs={12} sm={6} md={4}>
                   <StatsCard
-                    icon={Done}
+                    icon={Web}
                     iconColor="green"
-                    title="Publicar Nueva Noticia"
-                    description={'+'}
-                    statIcon={Done}
-                    statText="Agrega una nueva noticia."
+                    title="Publicar Nuevo Mensaje"
+                    description={<Button variant="fab" color="info" aria-label="addPost" customClasses="addButton"> <AddCircleOutline /> </Button>}
+                    statIcon={Web}
+                    statText="Agrega un nuevo mensaje."
                     onClick={this._handleAddNewPost}
                   />
                 </ItemGrid>
@@ -279,8 +280,8 @@ class Posts extends React.Component {
                 <ItemGrid xs={12} sm={12} md={12}>
                   <RegularCard
                     headerColor="blue"
-                    cardTitle="Noticias"
-                    cardSubtitle="Estas son las noticias que has creado."
+                    cardTitle="Mensajes"
+                    cardSubtitle="Estas son las Mensajes que has creado."
                     content={
                       <ReactTable
                         loading={this.state.status === 'loading'}
@@ -288,20 +289,42 @@ class Posts extends React.Component {
                         defaultFilterMethod={this._filterCaseInsensitive}
                         columns={[
                           {
-                            Header: 'Título',
-                            id: 'title',
-                            accessor: 'title'
+                            Header: "#",
+                            id: "row",
+                            maxWidth: 50,
+                            filterable: false,
+                            Cell: (row) => {
+                              return <div style={{textAlign: 'center'}}>{row.index+1}</div>;
+                            }
                           },
                           {
-                            Header: 'Fecha de publicación',
+                            Header: 'Título ⇵',
+                            id: 'title',
+                            accessor: 'title',
+                            Filter: ({ filter, onChange }) =>
+                              <input
+                                onChange={event => onChange(event.target.value)}
+                                style={{ width: '100%' }}
+                                placeholder='Buscar'
+                              />
+                          },
+                          {
+                            Header: 'Fecha de publicación ⇵',
                             id: 'created_at',
                             accessor: post =>
                               new Date(post.created_at).toLocaleString(),
+                            Filter: ({ filter, onChange }) =>
+                              <input
+                                onChange={event => onChange(event.target.value)}
+                                style={{ width: '100%' }}
+                                placeholder='Buscar'
+                              />
                           },
                           {
                             Header: 'Opciones',
                             id: 'options',
                             filterable: false,
+                            sortable: false,
                             accessor: post =>
                               <React.Fragment>
                                 <a href="#" onClick={this._handleUnpublish(post)}>
@@ -331,11 +354,11 @@ class Posts extends React.Component {
               >
                 <form onSubmit={this._handleSubmit}>
                   <DialogTitle id="form-dialog-title">
-                    {this.state.editForm ? 'Editar Noticia' : 'Crear Nueva Noticia'}
+                    {this.state.editForm ? 'Editar Mensaje' : 'Crear Nuevo Mensaje'}
                   </DialogTitle>
                   <DialogContent>
                     <DialogContentText>
-                      {this.state.editForm ? 'Ingrese la información de la noticia que desea modificar.' : 'Ingrese la información de la noticia que desea crear.'}
+                      {this.state.editForm ? 'Ingrese la información del mensaje que desea modificar.' : 'Ingrese la información del mensaje que desea crear.'}
                     </DialogContentText>
 
                     <TextField

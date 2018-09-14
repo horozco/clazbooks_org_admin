@@ -35,7 +35,7 @@ class Books extends React.Component {
   state = {
     status: 'loading',
     message: '',
-    currentBook: { id: null, name: '', original_name: '', short_description: '', author_id: '', categories: [], published: null, thumbnail_image_url: '' },
+    currentBook: { id: null, name: '', original_name: '', author_id: '', categories: [], published: null, thumbnail_image_url: '' },
     organization_id: '',
     image: '',
     audio: '',
@@ -113,7 +113,7 @@ class Books extends React.Component {
   _handleClose = () => {
     this.setState({
       openFormModal: false,
-      currentBook: { id: null, name: '', original_name: '', short_description: '', author_id: '', categories: [], published: null, thumbnail_image_url: '' },
+      currentBook: { id: null, name: '', original_name: '', author_id: '', categories: [], published: null, thumbnail_image_url: '' },
       iamge: '',
       editForm: false,
     });
@@ -151,7 +151,7 @@ class Books extends React.Component {
       this._getAllBooks().then( () => {
         this.setState({
           openFormModal: false,
-          currentBook: { id: null, name: '', original_name: '', short_description: '', author_id: '', categories: [], published: null, thumbnail_image_url: '' },
+          currentBook: { id: null, name: '', original_name: '', author_id: '', categories: [], published: null, thumbnail_image_url: '' },
           image: '',
           isSubmitting: false,
           showMessage: true,
@@ -166,7 +166,7 @@ class Books extends React.Component {
 
   _handleError = (errorMessage, hideModal=true) => {
     this.setState({
-      currentBook: hideModal ? { id: null, name: '', original_name: '', short_description: '', author_id: '', categories: [], published: null, thumbnail_image_url: '' } : this.state.currentBook,
+      currentBook: hideModal ? { id: null, name: '', original_name: '', author_id: '', categories: [], published: null, thumbnail_image_url: '' } : this.state.currentBook,
       image: '',
       success: true,
       showMessage: true,
@@ -190,10 +190,6 @@ class Books extends React.Component {
 
         if (this.original_name.value) {
           formData.append('book[original_name]', this.original_name.value);
-        }
-
-        if (this.short_description.value) {
-          formData.append('book[short_description]', this.short_description.value);
         }
 
         if (this.state.currentBook.author_id) {
@@ -310,7 +306,7 @@ class Books extends React.Component {
             {books ? (
               <RegularCard
                 cardTitle="Libros"
-                cardSubtitle="Estos son los libros de la plataforma."
+                cardSubtitle="Lista de libros creados por Clazbooks y por tu organización. Para publicar un libro, selecciona el ícono de más (+) y sigue los pasos."
                 content={
                   <ReactTable
                     loading={this.state.status === 'loading'}
@@ -318,9 +314,19 @@ class Books extends React.Component {
                     defaultFilterMethod={this._filterCaseInsensitive}
                     columns={[
                       {
+                        Header: "#",
+                        id: "row",
+                        maxWidth: 50,
+                        filterable: false,
+                        Cell: (row) => {
+                          return <div style={{textAlign: 'center'}}>{row.index+1}</div>;
+                        }
+                      },
+                      {
                         Header: 'Foto',
                         id: 'thumbnail_image_url',
                         filterable: false,
+                        sortable: false,
                         accessor: book =>
                           book.thumbnail_image_url ? (
                             <img
@@ -335,20 +341,39 @@ class Books extends React.Component {
                           ) : null,
                       },
                       {
-                        Header: 'Nombre',
+                        Header: 'Nombre ⇵',
                         accessor: 'name',
                         id: 'name',
+                        Filter: ({ filter, onChange }) =>
+                          <input
+                            onChange={event => onChange(event.target.value)}
+                            style={{ width: '100%' }}
+                            placeholder='Buscar'
+                          />
                       },
                       {
-                        Header: 'Autor',
+                        Header: 'Autor ⇵',
                         accessor: 'author.name',
                         id: 'author',
+                        Filter: ({ filter, onChange }) =>
+                          <input
+                            onChange={event => onChange(event.target.value)}
+                            style={{ width: '100%' }}
+                            placeholder='Buscar'
+                          />
                       },
                       {
-                        Header: 'Categorías',
+                        Header: 'Categorías ⇵',
                         filterable: false,
                         accessor: 'categories[0].name',
-                        id: 'id',
+                        id: 'category',
+                      },
+                      {
+                        Header: '¿Mi libro? ⇵',
+                        filterable: false,
+                        id: 'organization',
+                        accessor: book =>
+                          book.organization_id == currentOrganizationId ? 'Sí' : 'No',
                       },
                       {
                         Header: 'Opciones',
@@ -437,18 +462,8 @@ class Books extends React.Component {
                 fullWidth
                 margin="normal"
               />
-              <TextField
-                id="short_description"
-                label="Descripción corta"
-                name="short_description"
-                inputRef={ref => (this.short_description = ref)}
-                onChange={this._handleChange('short_description')}
-                value={currentBook.short_description}
-                fullWidth
-                margin="normal"
-              />
               <FormControl style={{minWidth: '290px'}}>
-               <InputLabel htmlFor="age-simple">Autor</InputLabel>
+               <InputLabel htmlFor="age-simple">Seleccionar Autor</InputLabel>
                <Select
                  value={this.state.editForm ?  (currentBook.author && currentBook.author.id) : currentBook.author_id }
                  onChange={this._handleChange('author_id')}
@@ -468,7 +483,7 @@ class Books extends React.Component {
                </Select>
               </FormControl>
               <FormControl style={{minWidth: '290px'}}>
-               <InputLabel htmlFor="age-simple">Categorias</InputLabel>
+               <InputLabel htmlFor="age-simple">Seleccionar Categorías</InputLabel>
                <Select
                  multiple
                  name='categories'
@@ -499,7 +514,7 @@ class Books extends React.Component {
                     value='true'
                   />
                 }
-                label="Publicado"
+                label="Seleccionar esta opción para publicarlo"
               />
               <br />
               <br />

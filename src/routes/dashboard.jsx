@@ -80,8 +80,8 @@ const dashboardRoutes = [
   {
     path: '/posts',
     pathRegex: /^\/news$/,
-    sidebarName: 'Noticias',
-    navbarName: 'Noticias',
+    sidebarName: 'Mensajes',
+    navbarName: 'Mensajes',
     icon: Web,
     component: Posts
   },

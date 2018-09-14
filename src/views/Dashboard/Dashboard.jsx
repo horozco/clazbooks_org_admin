@@ -15,7 +15,8 @@ import {
 } from "@material-ui/icons";
 import { withStyles, Grid } from "material-ui";
 
-import { StatsCard, ChartCard, RegularCard, Table, ItemGrid } from "components";
+import { StatsCard, ChartCard, RegularCard, ItemGrid } from "components";
+import ReactTable from 'react-table';
 
 import {
   dailySalesChart,
@@ -66,6 +67,16 @@ class Dashboard extends React.Component {
     this.setState({ value: index });
   };
 
+  _filterCaseInsensitive = (filter, row) => {
+    const id = filter.pivotId || filter.id;
+    return (
+      row[id] !== undefined ?
+        String(row[id].toLowerCase()).startsWith(filter.value.toLowerCase())
+        :
+        true
+    );
+  };
+
   render() {
     const {
       status,
@@ -91,7 +102,7 @@ class Dashboard extends React.Component {
               small=""
               statIcon={Fingerprint}
               statIconColor="danger"
-              statText="Códigos que se han generado."
+              statText="Número de invitaciones enviadas."
             />
           </ItemGrid>
           <ItemGrid xs={12} sm={6} md={4}>
@@ -101,7 +112,7 @@ class Dashboard extends React.Component {
               title="Invitaciones Activadas"
               description={codes_used}
               statIcon={DoneAll}
-              statText="Códigos usados por usuarios."
+              statText="Número de invitaciones activadas."
             />
           </ItemGrid>
           <ItemGrid xs={12} sm={6} md={4}>
@@ -111,7 +122,7 @@ class Dashboard extends React.Component {
               title="Invitaciones Disponibles"
               description={codes_remaining}
               statIcon={Done}
-              statText="Invitaciones disponibles para enviar."
+              statText="Número de invitaciones disponibles."
             />
           </ItemGrid>
         </Grid>
@@ -121,30 +132,87 @@ class Dashboard extends React.Component {
               <RegularCard
                 headerColor="blue"
                 cardTitle="Usuarios Activos"
-                cardSubtitle="Usuarios que pertenecen a su organización."
+                cardSubtitle="lista e información de usuarios."
                 content={
-                  <Table
-                    tableHeaderColor="warning"
-                    tableHead={[
-                      "#",
-                      "Nombre",
-                      "Email",
-                      "Tiempo Activo",
-                      "Más escuchado",
-                      "Más Leído",
-                      "Más información"
+                  <ReactTable
+                    loading={this.state.status === 'loading'}
+                    filterable
+                    defaultFilterMethod={this._filterCaseInsensitive}
+                    columns={[
+                      {
+                        Header: "#",
+                        id: "row",
+                        maxWidth: 50,
+                        filterable: false,
+                        Cell: (row) => {
+                          return <div style={{textAlign: 'center'}}>{row.index+1}</div>;
+                        }
+                      },
+                      {
+                        Header: 'Nombre ⇵',
+                        id: 'name',
+                        accessor: 'name',
+                        Filter: ({ filter, onChange }) =>
+                          <input
+                            onChange={event => onChange(event.target.value)}
+                            style={{ width: '100%' }}
+                            placeholder='Buscar'
+                          />
+                      },
+                      {
+                        Header: 'Email ⇵',
+                        id: 'email',
+                        accessor: 'email',
+                        Filter: ({ filter, onChange }) =>
+                          <input
+                            onChange={event => onChange(event.target.value)}
+                            style={{ width: '100%' }}
+                            placeholder='Buscar'
+                          />
+                      },
+                      {
+                        Header: 'Tiempo Activo ⇵',
+                        id: 'total_time_active',
+                        accessor: 'total_time_active',
+                        Filter: ({ filter, onChange }) =>
+                          <input
+                            onChange={event => onChange(event.target.value)}
+                            style={{ width: '100%' }}
+                            placeholder='Buscar'
+                          />
+                      },
+                      {
+                        Header: 'Más escuchado ⇵',
+                        id: 'most_played',
+                        accessor: 'most_played[0]',
+                        Filter: ({ filter, onChange }) =>
+                          <input
+                            onChange={event => onChange(event.target.value)}
+                            style={{ width: '100%' }}
+                            placeholder='Buscar'
+                          />
+                      },
+                      {
+                        Header: 'Más Leído ⇵',
+                        id: 'most_read',
+                        accessor: 'most_read[0]',
+                        Filter: ({ filter, onChange }) =>
+                          <input
+                            onChange={event => onChange(event.target.value)}
+                            style={{ width: '100%' }}
+                            placeholder='Buscar'
+                          />
+                      },
+                      {
+                        Header: 'Más información',
+                        id: 'options',
+                        filterable: false,
+                        sortable: false,
+                        accessor: user =>
+                          <Link to={`/users/${user.id}`}>Ver más</Link>
+                      },
                     ]}
-                    tableData={top_user_actives.map(({user}, index) => {
-                      return [
-                        index + 1,
-                        user.name,
-                        user.email,
-                        user.total_time_active,
-                        user.most_played[0],
-                        user.most_read[0],
-                        <Link to={`/users/${user.id}`}>Ver más</Link>
-                      ];
-                    })}
+                    data={top_user_actives.map(u => u.user)}
                   />
                 }
               />

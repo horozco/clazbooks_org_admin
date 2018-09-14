@@ -54,35 +54,62 @@ class Users extends React.Component {
           {users ? (
             <RegularCard
               cardTitle="Usuarios"
-              cardSubtitle="Estos son los usuarios de tu organización."
+              cardSubtitle="Lista e información de los usuarios de tu organización."
               content={
                 <ReactTable
                   filterable
                   defaultFilterMethod={this._filterCaseInsensitive}
                   columns={[
                     {
-                      Header: 'Nombre',
+                      Header: "#",
+                      id: "row",
+                      maxWidth: 50,
+                      filterable: false,
+                      Cell: (row) => {
+                        return <div style={{textAlign: 'center'}}>{row.index+1}</div>;
+                      }
+                    },
+                    {
+                      Header: 'Nombre ⇵',
                       accessor: 'name',
                       id: 'name',
+                      Filter: ({ filter, onChange }) =>
+                        <input
+                          onChange={event => onChange(event.target.value)}
+                          style={{ width: '100%' }}
+                          placeholder='Buscar'
+                        />
                     },
                     {
-                      Header: 'Email',
+                      Header: 'Email ⇵',
                       accessor: 'email',
                       id: 'email',
+                      Filter: ({ filter, onChange }) =>
+                        <input
+                          onChange={event => onChange(event.target.value)}
+                          style={{ width: '100%' }}
+                          placeholder='Buscar'
+                        />
                     },
                     {
-                      Header: 'Tiempo Total Activo',
+                      Header: 'Tiempo Total Activo ⇵',
                       accessor: 'total_time_active',
                       id: 'total_time_active',
+                      Filter: ({ filter, onChange }) =>
+                        <input
+                          onChange={event => onChange(event.target.value)}
+                          style={{ width: '100%' }}
+                          placeholder='Buscar'
+                        />
                     },
                     {
-                      Header: 'Libro más escuchado',
+                      Header: 'Libro más escuchado ⇵',
                       id: 'most_played',
                       filterable: false,
                       accessor: user => user.most_played[0],
                     },
                     {
-                      Header: 'Libro más leído',
+                      Header: 'Libro más leído ⇵',
                       id: 'most_read',
                       filterable: false,
                       accessor: user => user.most_read[0],
@@ -91,6 +118,7 @@ class Users extends React.Component {
                       Header: 'Opciones',
                       id: 'options',
                       filterable: false,
+                      sotable: false,
                       accessor: user => (
                         <Link to={`/users/${user.id}`}>Ver Más</Link>
                       ),

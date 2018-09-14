@@ -12,6 +12,8 @@ import {
 } from 'material-ui';
 import { Link } from 'react-router-dom';
 
+import SampleInvitationEmail from '../../assets/img/sampleInvitationEmail.png';
+
 import client from '../../utils/client';
 import URLS from '../../constants/urls.js';
 import { getAccessToken } from '../../utils/session.js';
@@ -31,6 +33,7 @@ class Invitations extends React.Component {
     emails: '',
     openSendModal: false,
     showMessage: false,
+    displayEmailSample: false,
   };
 
   componentDidMount() {
@@ -142,6 +145,12 @@ class Invitations extends React.Component {
     );
   };
 
+  _handleDisplayEmailSample = () => {
+    this.setState({
+      displayEmailSample: !this.state.displayEmailSample
+    })
+  }
+
   render() {
     const {
       status,
@@ -163,34 +172,61 @@ class Invitations extends React.Component {
             {invitations ? (
               <RegularCard
                 cardTitle="Invitaciones enviadas"
-                cardSubtitle="Estas son las invitaciones que has enviado."
+                cardSubtitle="Listas de emails y estatus de invitaciones enviadas."
                 content={
                   <ReactTable
                     filterable
                     defaultFilterMethod={this._filterCaseInsensitive}
                     columns={[
                       {
-                        Header: 'Email',
-                        accessor: 'email',
-                        id: 'email',
+                        Header: "#",
+                        id: "row",
+                        maxWidth: 50,
+                        filterable: false,
+                        Cell: (row) => {
+                          return <div style={{textAlign: 'center'}}>{row.index+1}</div>;
+                        }
                       },
                       {
-                        Header: '¿Aceptada?',
+                        Header: 'Email ⇵',
+                        accessor: 'email',
+                        id: 'email',
+                        Filter: ({ filter, onChange }) =>
+                          <input
+                            onChange={event => onChange(event.target.value)}
+                            style={{ width: '100%' }}
+                            placeholder='Buscar'
+                          />
+                      },
+                      {
+                        Header: '¿Activado? ⇵',
                         id: 'accept',
                         filterable: false,
                         accessor: invitation =>
                           invitation.accepted ? 'Sí' : 'No',
                       },
                       {
-                        Header: 'Fecha de activación',
+                        Header: 'Fecha de activación ⇵',
                         accessor: 'accepted_at',
+                        Filter: ({ filter, onChange }) =>
+                          <input
+                            onChange={event => onChange(event.target.value)}
+                            style={{ width: '100%' }}
+                            placeholder='Buscar'
+                          />
                       },
                       {
-                        Header: 'Fecha de envío',
+                        Header: 'Fecha de envío ⇵',
                         accessor: 'sent_at',
+                        Filter: ({ filter, onChange }) =>
+                          <input
+                            onChange={event => onChange(event.target.value)}
+                            style={{ width: '100%' }}
+                            placeholder='Buscar'
+                          />
                       },
                       {
-                        Header: 'Status',
+                        Header: 'Estatus ⇵',
                         id: 'revoked',
                         filterable: false,
                         accessor: invitation =>
@@ -200,16 +236,10 @@ class Invitations extends React.Component {
                         Header: 'Opciones',
                         id: 'options',
                         filterable: false,
+                        sortable: false,
                         accessor: invitation =>
                           invitation.revoked ? null : (
-                            <IconButton
-                              key="close"
-                              aria-label="Close"
-                              color="inherit"
-                              onClick={() => this._revokeToken(invitation.id)}
-                            >
-                              <Close />
-                            </IconButton>
+                            <a style={{cursor: 'pointer'}} onClick={() => this._revokeToken(invitation.id)}>Desactivar</a>
                           ),
                       },
                     ]}
@@ -247,12 +277,20 @@ class Invitations extends React.Component {
               autoFocus
               margin="dense"
               id="name"
+              multiline={true}
               onChange={this._handleChange()}
               value={this.state.emails}
               label="Correos electrónicos"
-              type="email"
               fullWidth
             />
+            <a onClick={this._handleDisplayEmailSample}>
+              {this.state.displayEmailSample ? 'Ocultar email de ejemplo' : 'Mostrar email de ejemplo' }
+            </a>
+            {
+              this.state.displayEmailSample
+              &&
+              <img style={{width: '227px', margin: '0 auto', display: 'block'}} src={SampleInvitationEmail}></img>
+            }
           </DialogContent>
           <DialogActions>
             <Button onClick={this._handleClose} color="primary">

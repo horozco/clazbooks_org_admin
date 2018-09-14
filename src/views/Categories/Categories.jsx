@@ -252,14 +252,21 @@ class Categories extends React.Component {
                           ) : null,
                       },
                       {
-                        Header: 'Nombre',
+                        Header: 'Nombre ⇵',
                         accessor: 'name',
                         id: 'id',
+                        Filter: ({ filter, onChange }) =>
+                          <input
+                            onChange={event => onChange(event.target.value)}
+                            style={{ width: '100%' }}
+                            placeholder='Buscar'
+                          />
                       },
                       {
                         Header: 'Opciones',
                         id: 'options',
                         filterable: false,
+                        sortable: false,
                         accessor: category =>
                           category.organization && (category.organization.id === currentOrganizationId) ? (
                             <div>
