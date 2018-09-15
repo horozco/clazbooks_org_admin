@@ -9,6 +9,10 @@ import Books from 'views/Books/Books.jsx';
 import Readers from 'views/Readers/Readers.jsx';
 import Categories from 'views/Categories/Categories.jsx';
 import Posts from 'views/Posts/Posts.jsx';
+import Tests from 'views/Tests/Tests.jsx';
+import Notifications from 'views/Notifications/Notifications.jsx';
+import Emails from 'views/Emails/Emails.jsx';
+import Organizations from 'views/Organizations/Organizations.jsx';
 
 import {
   Dashboard,
@@ -19,6 +23,10 @@ import {
   Bookmark,
   Email,
   Web,
+  List,
+  PersonAdd,
+  NotificationsActive,
+  Work,
 } from '@material-ui/icons';
 
 const dashboardRoutes = [
@@ -46,11 +54,11 @@ const dashboardRoutes = [
     component: Users
   },
   {
-    path: '/emails',
-    pathRegex: /^\/emails$/,
+    path: '/invitations',
+    pathRegex: /^\/invitations$/,
     sidebarName: 'Invitaciones',
     navbarName: 'Invitaciones',
-    icon: Email,
+    icon: PersonAdd,
     component: Invitations
   },
   {
@@ -79,11 +87,43 @@ const dashboardRoutes = [
   },
   {
     path: '/posts',
-    pathRegex: /^\/news$/,
+    pathRegex: /^\/posts$/,
     sidebarName: 'Mensajes',
     navbarName: 'Mensajes',
     icon: Web,
     component: Posts
+  },
+  {
+    path: '/tests',
+    pathRegex: /^\/tests$/,
+    sidebarName: 'Exámenes',
+    navbarName: 'Exámenes',
+    icon: List,
+    component: Tests
+  },
+  {
+    path: '/emails',
+    pathRegex: /^\/emails$/,
+    sidebarName: 'Emails Masivos',
+    navbarName: 'Emails Masivos',
+    icon: Email,
+    component: Emails
+  },
+  {
+    path: '/notifications',
+    pathRegex: /^\/notifications$/,
+    sidebarName: 'Push Notifications',
+    navbarName: 'Push Notifications',
+    icon: NotificationsActive,
+    component: Notifications
+  },
+  {
+    path: '/organizations',
+    pathRegex: /^\/organizations$/,
+    sidebarName: 'Organizaciones',
+    navbarName: 'Organizaciones',
+    icon: Work,
+    component: Organizations
   },
   {
     path: '/settings',

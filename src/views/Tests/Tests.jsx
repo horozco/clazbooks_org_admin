@@ -44,7 +44,7 @@ import dashboardStyle from "assets/jss/material-dashboard-react/dashboardStyle";
 import SimpleMDE from 'react-simplemde-editor';
 import "simplemde/dist/simplemde.min.css";
 
-class Notifications extends React.Component {
+class Tests extends React.Component {
   state = {
     status: "loading",
     currentPost: { id: null, title: '', md_content: '' },
@@ -359,8 +359,8 @@ class Notifications extends React.Component {
   }
 }
 
-Notifications.propTypes = {
+Tests.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(dashboardStyle)(Notifications);
+export default withStyles(dashboardStyle)(Tests);

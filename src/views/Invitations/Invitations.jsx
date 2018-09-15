@@ -21,7 +21,7 @@ import { getAccessToken } from '../../utils/session.js';
 import { RegularCard, ItemGrid, Button } from 'components';
 import ReactTable from 'react-table';
 
-import SendIcon from '@material-ui/icons/Send';
+import PersonAdd from '@material-ui/icons/PersonAdd';
 import Cancel from '@material-ui/icons/Cancel';
 import Close from '@material-ui/icons/Close';
 import './invitation.css';
@@ -259,7 +259,7 @@ class Invitations extends React.Component {
             customClasses="floating-button"
             round
           >
-            <SendIcon />
+            <PersonAdd />
           </Button>
         </Grid>
         <Dialog
@@ -297,7 +297,7 @@ class Invitations extends React.Component {
               <Cancel /> Cancelar
             </Button>
             <Button onClick={this._handleSubmit} color="info">
-              <SendIcon /> Enviar
+              <PersonAdd /> Enviar
             </Button>
           </DialogActions>
         </Dialog>
