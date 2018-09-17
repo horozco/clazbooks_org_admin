@@ -281,7 +281,7 @@ class Posts extends React.Component {
                   <RegularCard
                     headerColor="blue"
                     cardTitle="Mensajes"
-                    cardSubtitle="Estas son las Mensajes que has creado."
+                    cardSubtitle="Estas son los Mensajes que has creado."
                     content={
                       <ReactTable
                         loading={this.state.status === 'loading'}

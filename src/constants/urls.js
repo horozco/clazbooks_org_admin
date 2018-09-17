@@ -13,6 +13,7 @@ const URLS = {
   CATEGORIES: `/organization_admin/categories/`,
   READERS: `/organization_admin/new_readers/`,
   POSTS: `/organization_admin/news/`,
+  NOTIFICATIONS: `/organization_admin/push_notifications/`,
 }
 
 export default URLS
