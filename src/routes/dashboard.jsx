@@ -9,10 +9,11 @@ import Books from 'views/Books/Books.jsx';
 import Readers from 'views/Readers/Readers.jsx';
 import Categories from 'views/Categories/Categories.jsx';
 import Posts from 'views/Posts/Posts.jsx';
-import Tests from 'views/Tests/Tests.jsx';
+import Assessments from 'views/Assessments/Assessments.jsx';
 import Notifications from 'views/Notifications/Notifications.jsx';
 import Emails from 'views/Emails/Emails.jsx';
 import Organizations from 'views/Organizations/Organizations.jsx';
+import Questions from 'views/Questions/Questions.jsx';
 
 import {
   Dashboard,
@@ -94,12 +95,12 @@ const dashboardRoutes = [
     component: Posts
   },
   {
-    path: '/tests',
-    pathRegex: /^\/tests$/,
+    path: '/assessments',
+    pathRegex: /^\/assessments$/,
     sidebarName: 'Exámenes',
     navbarName: 'Exámenes',
     icon: List,
-    component: Tests
+    component: Assessments
   },
   {
     path: '/emails',
@@ -138,6 +139,13 @@ const dashboardRoutes = [
     navbarName: 'Contenido',
     noSidebar: true,
     component: Readers
+  },
+  {
+    path: '/questions/:id',
+    pathRegex: /^\/questions\/\d*$/,
+    navbarName: 'Preguntas',
+    noSidebar: true,
+    component: Questions
   },
   { redirect: true, path: '/', pathRegex: /^\/$/, to: '/login', navbarName: 'Redirect' }
 ];

@@ -120,7 +120,7 @@ class Notifications extends React.Component {
       isSubmitting: false,
       showMessage: true,
       editForm: false,
-      message: message || 'Se ha guardado el mensaje.',
+      message: message || 'La notificación se ha enviado correctamente.',
     });
   };
 
