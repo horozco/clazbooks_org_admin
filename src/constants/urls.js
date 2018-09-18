@@ -15,6 +15,7 @@ const URLS = {
   POSTS: `/organization_admin/news/`,
   NOTIFICATIONS: `/organization_admin/push_notifications/`,
   ASSESSMENTS: `/organization_admin/assessments/`,
+  EMAILS: `/organization_admin/emails/`,
 }
 
 export default URLS

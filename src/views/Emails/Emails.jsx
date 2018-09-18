@@ -30,124 +30,34 @@ import {
   TextField,
 } from "material-ui";
 
-import { SessionConsumer } from "components/Session/SessionContext.jsx";
+import { RegularCard, ItemGrid, Button } from "components";
 
-import { StatsCard, ChartCard, RegularCard, ItemGrid, Button } from "components";
-import ReactTable from 'react-table';
-
-import { Link } from "react-router-dom";
 import client from '../../utils/client';
 import URLS from "../../constants/urls.js";
 
 import dashboardStyle from "assets/jss/material-dashboard-react/dashboardStyle";
 
-import SimpleMDE from 'react-simplemde-editor';
-import "simplemde/dist/simplemde.min.css";
+import { Editor } from '@tinymce/tinymce-react';
 
 class Emails extends React.Component {
   state = {
-    status: "loading",
-    currentPost: { id: null, title: '', md_content: '' },
-    published_posts: 0,
-    posts: [],
-    editForm: false,
-    openFormModal: false,
+    subject: '',
+    body: '',
     showMessage: false,
     isSubmitting: false,
-
   };
 
   componentDidMount() {
-    this._getAllPosts();
+    // this._getAllPosts();
   }
-
-  _getAllPosts = () => {
-    return client
-      .get(URLS.POSTS)
-        .then(({ data: posts }) => {
-          this.setState({
-            ...posts,
-            ...{published_posts: posts.posts.length},
-            status: "success"
-          });
-        })
-        .catch(() => {
-          this.setState({
-            status: "error"
-          });
-        });
-  };
-
-  _filterCaseInsensitive = (filter, row) => {
-    const id = filter.pivotId || filter.id;
-    return (
-      row[id] !== undefined ?
-        String(row[id].toLowerCase()).startsWith(filter.value.toLowerCase())
-        :
-        true
-    );
-  };
-
-  _handleUnpublish = post => event => {
-    event.preventDefault();
-    alert(`Despublicando ${post.title}`)
-  };
-
-  _handleEdit = post => event => {
-    event.preventDefault();
-    this.setState({
-      currentPost: { ...post },
-      openFormModal: true,
-      editForm: true,
-    });
-  };
-
-  _handleDestroy = post => event => {
-    event.preventDefault();
-    if (
-      window.confirm(
-        '¿Está seguro que desea eliminar este mensaje?'
-      )
-    ) {
-      client
-        .delete(`${URLS.POSTS}/${post.id}`)
-        .then(({ data }) => {
-          this.setState({
-            showMessage: true,
-            message: 'Se ha eliminado el mensaje.',
-          }, () => {
-            this._getAllPosts();
-          });
-        })
-        .catch(err => {
-          this.setState({
-            showMessage: true,
-            message: err.response.data.message || 'Ha ocurrido un error.',
-          });
-        });
-    }
-  };
-
-  _handleAddNewPost = () => {
-    this.setState({ openFormModal: true });
-  };
-
-  _handleClose = () => {
-    this.setState({
-      openFormModal: false,
-      currentPost: { id: null, title: '', md_content: '' },
-      editForm: false,
-    });
-  };
 
   _handleChange = field => event => {
     this.setState({
-      currentPost: {
-        ...this.state.currentPost,
-        [field]: event.target ? event.target.value : event,
-      },
+      [field]: event.target ? event.target.value : event
     });
   };
+
+  _handleEditorChange = (body) => this.setState({body});
 
   _successSave = data => {
     var message = '';
@@ -158,14 +68,12 @@ class Emails extends React.Component {
         })
         .join('-');
     }
-    this._getAllPosts();
     this.setState({
-      openFormModal: false,
-      currentPost: { id: null, title: '', md_content: '' },
       isSubmitting: false,
       showMessage: true,
-      editForm: false,
-      message: message || 'Se ha guardado el mensaje.',
+      subject: '',
+      body: '',
+      message: message || 'Se ha enviado el mensaje.',
     });
   };
 
@@ -177,21 +85,16 @@ class Emails extends React.Component {
       },
       () => {
         const formData = new FormData();
-        if (this.title.value) {
-          formData.append('post[title]', this.title.value);
+        if (this.subject.value) {
+          formData.append('email[subject]', this.subject.value);
         }
 
-        if (this.md_content.value) {
-          formData.append("post[new_reader_attributes][md_content]", this.md_content.value);
+        if (this.state.body) {
+          formData.append("email[body]", this.state.body.target.getContent());
         }
 
-        const method = this.state.editForm ? 'put' : 'post';
-        const url = this.state.editForm
-          ? `${URLS.POSTS}${this.state.currentPost.id}`
-          : URLS.POSTS;
-
-        if (this.title.value || this.md_content.value) {
-          client[method](url, formData)
+        if (this.subject.value && this.state.body) {
+          client.post(URLS.EMAILS, formData)
             .then(({ data }) => {
               this._successSave(data);
             })
@@ -199,7 +102,7 @@ class Emails extends React.Component {
               this._handleError(error);
             });
         } else {
-          this._handleError('No se han realizado cambios.');
+          this._handleError('Debe tener un subject y un body.');
         }
       }
     );
@@ -207,11 +110,9 @@ class Emails extends React.Component {
 
   _handleError = errorMessage => {
     this.setState({
-      currentPost: { id: null, title: '', intro: '', md_content: '' },
       showMessage: true,
       isSubmitting: false,
       message: errorMessage,
-      openFormModal: false,
     });
   };
 
@@ -221,140 +122,65 @@ class Emails extends React.Component {
 
   render() {
     const {
-      status,
-      published_posts,
-      posts,
+      subject,
+      body,
       showMessage,
       message,
-      openFormModal,
-      currentPost,
       isSubmitting,
-      editForm,
     } = this.state;
 
-    if(status == 'loading') {
-      return <h1>Cargando...</h1>
-    }
-
     return (
-      <SessionConsumer>
-        {
-          session => (
-            <div>
-              <Grid container>
-                <ItemGrid xs={12} sm={6} md={4}>
-                  <StatsCard
-                    icon={Done}
-                    iconColor="red"
-                    title=""
-                    description={''}
-                    small=""
-                    statIcon={Done}
-                    statIconColor="danger"
-                    statText=""
-                  />
-                </ItemGrid>
-                <ItemGrid xs={12} sm={6} md={4}>
-                  <StatsCard
-                    icon={DoneAll}
-                    iconColor="orange"
-                    title=""
-                    description={''}
-                    statIcon={DoneAll}
-                    statText=""
-                  />
-                </ItemGrid>
-                <ItemGrid xs={12} sm={6} md={4}>
-                  <StatsCard
-                    icon={Web}
-                    iconColor="green"
-                    title=""
-                    description={''}
-                    statIcon={Web}
-                    statText=""
-                    onClick={this._handleAddNewPost}
-                  />
-                </ItemGrid>
-              </Grid>
-              <Grid container>
-                <ItemGrid xs={12} sm={12} md={12}>
-                  <RegularCard
-                    headerColor="blue"
-                    cardTitle="Coming soon..."
-                    cardSubtitle="Coming soon..."
-                    content={
-                      <div></div>
-                    }
-                  />
-                </ItemGrid>
-              </Grid>
-
-              <Dialog
-                open={this.state.openFormModal}
-                aria-labelledby="form-dialog-title"
-              >
+      <div>
+        <Grid container>
+          <ItemGrid xs={12} sm={12} md={12}>
+            <RegularCard
+              headerColor="blue"
+              cardTitle="Enviar emails masivos"
+              cardSubtitle="Envia emails masivos a todos tus usuarios."
+              content={
                 <form onSubmit={this._handleSubmit}>
-                  <DialogTitle id="form-dialog-title">
-                    {this.state.editForm ? 'Editar Mensaje' : 'Crear Nuevo Mensaje'}
-                  </DialogTitle>
-                  <DialogContent>
-                    <DialogContentText>
-                      {this.state.editForm ? 'Ingrese la información del mensaje que desea modificar.' : 'Ingrese la información del mensaje que desea crear.'}
-                    </DialogContentText>
-
-                    <TextField
-                      autoFocus
-                      id="title"
-                      label="Título"
-                      name="title"
-                      inputRef={ref => (this.title = ref)}
-                      onChange={this._handleChange('title')}
-                      value={currentPost.title}
-                      fullWidth
-                      margin="normal"
-                      required
-                    />
-                    <br/>
-                    <br/>
-                    <SimpleMDE
-                      ref={ref => (this.md_content = ref)}
-                      name='md_content'
-                      value={currentPost.md_content}
-                      onChange={this._handleChange('md_content')}
-                      required
-                    />
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={this._handleClose} color="primary">
-                      <Cancel /> Cancelar
-                    </Button>
-                    <Button type="submit" disabled={isSubmitting} color="primary">
-                      <Save /> Guardar
-                    </Button>
-                  </DialogActions>
+                  <h3> Ingrese la información del email que desea enviar</h3>
+                  <TextField
+                    autoFocus
+                    id="subject"
+                    label="Asunto"
+                    name="subject"
+                    inputRef={ref => (this.subject = ref)}
+                    onChange={this._handleChange('subject')}
+                    value={subject}
+                    fullWidth
+                    margin="normal"
+                    required
+                  />
+                  <br/>
+                  <br/>
+                  <Editor initialValue="<p>This is the initial content of the editor</p>" init={{ plugins: 'link image code', toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | code' }} onChange={this._handleEditorChange} />
+                  <Button type="submit" disabled={isSubmitting} color="primary">
+                    <Save /> Enviar
+                  </Button>
                 </form>
-              </Dialog>
+              }
+            />
+          </ItemGrid>
+        </Grid>
 
-              <Snackbar
-                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                open={showMessage}
-                onClose={this._handleErrorMessageClose}
-                message={<span>{this.state.message}</span>}
-                action={[
-                  <IconButton
-                    key="close"
-                    aria-label="Close"
-                    color="inherit"
-                    onClick={this._handleErrorMessageClose}
-                  >
-                    <Close />
-                  </IconButton>,
-                ]}
-              />
-            </div>
-          )
-        }
-      </SessionConsumer>
+        <Snackbar
+          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+          open={showMessage}
+          onClose={this._handleErrorMessageClose}
+          message={<span>{this.state.message}</span>}
+          action={[
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={this._handleErrorMessageClose}
+            >
+              <Close />
+            </IconButton>,
+          ]}
+        />
+      </div>
     );
   }
 }
