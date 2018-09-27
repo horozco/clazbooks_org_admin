@@ -7,28 +7,17 @@ import {
 } from "material-ui";
 
 class Answer extends React.Component {
-  state = {
-    questionId: this.props.questionId || '',
-    id: this.props.id || '',
-    body: this.props.body || '',
-    correct_answer: this.props.correct_answer || false,
-    index: this.props.index + 1 || '',
+
+  _handleAnswerChange = (questionIndex, index) => e => {
+    this.props.onEditAnswer(questionIndex, index, {
+      body: e.target.value
+    });
   }
 
-  _handleChange = field => event => {
-    this.setState(
-      {
-        [field]: event.target ? event.target.value : event,
-      },
-    );
-  };
-
-  _handlecorrectAnswerChange = event => {
-    this.setState(
-      {
-        correct_answer: event.target.value
-      }
-    )
+  _handleCorrectChange = (questionIndex, index, checked) => e => {
+    this.props.onEditAnswer(questionIndex, index, {
+      correct_answer: !checked
+    }, true);
   }
 
   render() {
@@ -36,17 +25,18 @@ class Answer extends React.Component {
       questionId,
       id,
       body,
-      correct_answer,
+      correctAnswer,
       index,
-    } = this.state;
+      questionIndex,
+      handleCorrectAnswerChange
+    } = this.props;
 
     return (
       <Grid container>
         <ItemGrid xs={2} sm={2} md={2}>
           <Radio
-            checked={ correct_answer===true }
-            onChange={ this._handlecorrectAnswerChange }
-            value={true}
+            checked={correctAnswer}
+            onChange={this._handleCorrectChange(questionIndex, index, correctAnswer)}
             name={`correct_answer${questionId}`}
             aria-label={`body${index}`}
           />
@@ -56,7 +46,7 @@ class Answer extends React.Component {
             id={`body${index}`}
             label={`Respuesta #${index}`}
             name={`body${index}`}
-            onChange={this._handleChange('body')}
+            onChange={this._handleAnswerChange(questionIndex, index)}
             value={body}
             fullWidth
             margin="normal"

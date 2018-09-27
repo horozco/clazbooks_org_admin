@@ -22,9 +22,11 @@ function StatsCard({ ...props }) {
     statIconColor,
     iconColor,
     onClick,
+    selected
   } = props;
+
   return (
-    <Card className={classes.card} onClick={onClick}>
+    <Card className={classes.card + (onClick ? ' selectable' : '') + (selected ? ' selected' : '')} onClick={onClick}>
       <CardHeader
         classes={{
           root: classes.cardHeader + " " + classes[iconColor + "CardHeader"],
@@ -92,7 +94,8 @@ StatsCard.propTypes = {
     "gray"
   ]),
   statLink: PropTypes.object,
-  statText: PropTypes.node
+  statText: PropTypes.node,
+  selectable: PropTypes.bool,
 };
 
 export default withStyles(statsCardStyle)(StatsCard);

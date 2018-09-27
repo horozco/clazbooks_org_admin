@@ -10,34 +10,14 @@ import Answer from "../Answer/Answer.jsx";
 import AddIcon from '@material-ui/icons/Add';
 
 class Question extends React.Component {
-  state = {
-    id: this.props.id || '',
-    body: this.props.body || '',
-    answers: this.props.answers || [],
-    index: this.props.index + 1 || '',
+
+  _handleSubmit = (index) => e => {
+    e.preventDefault();
+    this.props.onSubmit(index)
   }
 
-  _handleChange = field => event => {
-    this.setState(
-      {
-        [field]: event.target ? event.target.value : event,
-      },
-    );
-  };
-
-  _handleSubmit = organizationId => event => {
-    event.preventDefault();
-  }
-
-  _handleAddAnswer = () => {
-    const newAnswer = {
-      id: '',
-      body: '',
-      correct_answer: false
-    }
-    this.setState({
-      answers: [...this.state.answers, newAnswer]
-    })
+  _handleAddAnswer = (index) => (e) => {
+    this.props.onAddAnswer(index);
   }
 
   render() {
@@ -46,7 +26,11 @@ class Question extends React.Component {
       body,
       answers,
       index,
-    } = this.state;
+      correct_answer,
+      onAddAnswer,
+      onEditAnswer,
+      onEditQuestion
+    } = this.props;
 
     return (
       <RegularCard
@@ -55,12 +39,12 @@ class Question extends React.Component {
           <div>
             <Grid container>
               <ItemGrid xs={12} sm={12} md={12}>
-                <form onSubmit={this._handleSubmit()}>
+                <form onSubmit={this._handleSubmit(index)}>
                   <TextField
                     id="body"
                     label="Título"
                     name="body"
-                    onChange={this._handleChange('body')}
+                    onChange={(e) => onEditQuestion(index, e.target.value)}
                     value={body}
                     fullWidth
                     margin="normal"
@@ -69,18 +53,38 @@ class Question extends React.Component {
                   <div style={{ background: '#dadada', padding: '10px', marginTop: '12px' }}>
                     {
                       answers.map((answer, i) => {
-                        return <Answer questionId={id} id={answer.id} body={answer.body} correct_answer={answer.correct_answer} index={i} key={i}/>
+                        return <Answer
+                          questionId={index}
+                          questionIndex={index}
+                          index={i}
+                          id={i}
+                          body={answer.body}
+                          correctAnswer={answer.correct_answer}
+                          onEditAnswer={onEditAnswer}
+                          handleCorrectAnswerChange={() => {}}
+                          index={i}
+                          key={i}
+                        />
                       })
                     }
                   </div>
                   <Button
-                    onClick={this._handleAddAnswer}
+                    onClick={this._handleAddAnswer(index)}
                     variant="fab"
                     color="info"
                     aria-label="_handleAddAnswer"
                     round
                   >
                     <AddIcon />
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="fab"
+                    color="info"
+                    aria-label="_handleAddAnswer"
+                    round
+                  >
+                    Save
                   </Button>
                 </form>
               </ItemGrid>

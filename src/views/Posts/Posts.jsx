@@ -89,8 +89,40 @@ class Posts extends React.Component {
   };
 
   _handleUnpublish = post => event => {
-    event.preventDefault();
-    alert(`Despublicando ${post.title}`)
+    if (post.published) {
+      event.preventDefault();
+      if (
+        window.confirm(
+          '¿Está seguro que desea despublicar este mensaje?'
+        )
+      ) {
+        return client
+          .post(`${URLS.POSTS}/${post.id}/unpublish`)
+            .then(({}) => {
+              this._getAllPosts();
+            })
+            .catch(() => {
+              this.setState({
+                status: "error"
+              });
+            });
+      }
+    } else {
+      this._handlePublish(post);
+    }
+  };
+
+  _handlePublish = post => {
+    return client
+      .post(`${URLS.POSTS}/${post.id}/publish`)
+        .then(({}) => {
+          this._getAllPosts();
+        })
+        .catch(() => {
+          this.setState({
+            status: "error"
+          });
+        });
   };
 
   _handleEdit = post => event => {
@@ -321,6 +353,18 @@ class Posts extends React.Component {
                               />
                           },
                           {
+                            Header: 'Publicado ⇵',
+                            id: 'published',
+                            accessor: post =>
+                              post.published ? 'Sí' : 'No',
+                            Filter: ({ filter, onChange }) =>
+                              <input
+                                onChange={event => onChange(event.target.value)}
+                                style={{ width: '100%' }}
+                                placeholder='Buscar'
+                              />
+                          },
+                          {
                             Header: 'Opciones',
                             id: 'options',
                             filterable: false,
@@ -328,7 +372,7 @@ class Posts extends React.Component {
                             accessor: post =>
                               <React.Fragment>
                                 <a href="#" onClick={this._handleUnpublish(post)}>
-                                  Despublicar
+                                  { post.published ? 'Despublicar' : 'Publicar'}
                                 </a>
                                 {' - '}
                                 <a href="#" onClick={this._handleEdit(post)}>

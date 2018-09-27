@@ -14,7 +14,7 @@ import {
   Save,
   Cancel,
   Close,
-  AddCircleOutline
+  Send,
 } from "@material-ui/icons";
 
 import {
@@ -37,7 +37,8 @@ import URLS from "../../constants/urls.js";
 
 import dashboardStyle from "assets/jss/material-dashboard-react/dashboardStyle";
 
-import { Editor } from '@tinymce/tinymce-react';
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css';
 
 class Emails extends React.Component {
   state = {
@@ -90,7 +91,7 @@ class Emails extends React.Component {
         }
 
         if (this.state.body) {
-          formData.append("email[body]", this.state.body.target.getContent());
+          formData.append("email[body]", this.state.body);
         }
 
         if (this.subject.value && this.state.body) {
@@ -136,14 +137,14 @@ class Emails extends React.Component {
             <RegularCard
               headerColor="blue"
               cardTitle="Enviar emails masivos"
-              cardSubtitle="Envia emails masivos a todos tus usuarios."
+              cardSubtitle="Escribe el título y el contenido del email."
               content={
                 <form onSubmit={this._handleSubmit}>
                   <h3> Ingrese la información del email que desea enviar</h3>
                   <TextField
                     autoFocus
                     id="subject"
-                    label="Asunto"
+                    label="Escribe aquí el título del email que deseas enviar"
                     name="subject"
                     inputRef={ref => (this.subject = ref)}
                     onChange={this._handleChange('subject')}
@@ -154,9 +155,9 @@ class Emails extends React.Component {
                   />
                   <br/>
                   <br/>
-                  <Editor initialValue="<p>This is the initial content of the editor</p>" init={{ plugins: 'link image code', toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | code' }} onChange={this._handleEditorChange} />
+                  <ReactQuill value={body} onChange={this._handleEditorChange} />
                   <Button type="submit" disabled={isSubmitting} color="primary">
-                    <Save /> Enviar
+                    <Send /> Enviar
                   </Button>
                 </form>
               }
