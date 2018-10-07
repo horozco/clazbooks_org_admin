@@ -166,7 +166,7 @@ class Emails extends React.Component {
         </Grid>
 
         <Snackbar
-          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
           open={showMessage}
           onClose={this._handleErrorMessageClose}
           message={<span>{this.state.message}</span>}

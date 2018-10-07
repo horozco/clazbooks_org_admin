@@ -166,7 +166,7 @@ class Settings extends React.Component {
                 />
               </ItemGrid>
               <Snackbar
-                anchorOrigin={{vertical: 'top', horizontal: 'left'}}
+                anchorOrigin={{vertical: 'top', horizontal: 'right'}}
                 open={success}
                 onClose={this._handleNotificationClose}
                 message={<span>{notificationMessage}</span>}

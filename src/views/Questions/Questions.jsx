@@ -60,12 +60,57 @@ class Questions extends React.Component {
     })
   }
 
-  _addAnswer = (questionIndex) => {
+  _removeQuestion = (questionIndex) => {
+    const question = this.state.questions[questionIndex];
+    if (question.id) {
+      const url = `${URLS.ASSESSMENTS}${this.props.match.params.id}/questions/${question.id}}`
+      return client.delete(url)
+        .then(() => {
+          this.removeQuestionFromState(questionIndex);
+        })
+    } else {
+      this.removeQuestionFromState(questionIndex);
+    }
+  }
+
+  removeQuestionFromState = (questionIndex) => {
+    this.state.questions.splice(questionIndex, 1);
+    this.setState({
+      questions: this.state.questions,
+      showMessage: true,
+      message: 'Se ha eliminado la pregunta correctamente.'
+    })
+  }
+
+  _addAnswer = (questionIndex, target, fromQuestion=null) => {
     const { questions } = this.state;
     const question = questions[questionIndex];
     const answers = question.answers.concat([{body: '', correct_answer: false}])
     const editedQuestion = Object.assign({}, question, {
       answers
+    });
+    const newQuestions = [
+      ...questions.slice(0, questionIndex),
+      editedQuestion,
+      ...questions.slice(questionIndex + 1)
+    ];
+    this.setState({
+      questions: newQuestions
+    }, () => {
+      if (target) {
+        const form = target.form;
+        const currentFormindex = Array.prototype.indexOf.call(form, target);
+        form.elements[currentFormindex + (fromQuestion ? 2 : 3)].focus();
+      }
+    })
+  }
+
+  _removeAnswer = (questionIndex, answerIndex) => {
+    const { questions } = this.state;
+    const question = questions[questionIndex];
+    question.answers[answerIndex] = {...question.answers[answerIndex], ...{'_destroy' : true}};
+    const editedQuestion = Object.assign({}, question, {
+      answers: question.answers
     });
     const newQuestions = [
       ...questions.slice(0, questionIndex),
@@ -113,9 +158,12 @@ class Questions extends React.Component {
     return client({
       url,
       method,
-      data: Object.assign({}, question, {
-        answers_attributes: question.answers
-      })
+      data: {
+        'question':
+          Object.assign({}, question, {
+            answers_attributes: question.answers
+          })
+      }
     }).then(res => {
       this.setState({
         questions: this.state.questions.map((item, idx) => {
@@ -123,8 +171,16 @@ class Questions extends React.Component {
             return res.data.question;
           }
           return item;
-        })
+        }),
+        showMessage: true,
+        message: 'Se ha guardado la pregunta correctamente.'
       })
+    }).catch(({response: {data: {errors: errors}}}) => {
+      console.log(errors);
+      this.setState({
+        showMessage: true,
+        message: errors
+      });
     })
   }
 
@@ -169,15 +225,22 @@ class Questions extends React.Component {
             <h1>{`Preguntas para ${assessment.name}`}</h1>
 
             {
-              questions.map((question, i) => {
+              questions.length <= 0 &&
+                <p>Usted no ha creado ninguna pregunta. Cree una con el botón flotante en la parte inferior derecha.</p>
+            }
+
+            {
+              questions && questions.map((question, i) => {
                 return <Question
                   assessmentId={assessment.id}
                   onEditQuestion={this._editQuestion}
+                  onRemoveQuestion={this._removeQuestion}
                   onAddAnswer={this._addAnswer}
+                  onRemoveAnswer={this._removeAnswer}
                   onEditAnswer={this._editAnswer}
-                  id={question.id}
-                  body={question.body}
-                  answers={question.answers}
+                  id={question && question.id}
+                  body={question && question.body}
+                  answers={question && question.answers}
                   onSubmit={this._onQuestionSubmit}
                   index={i}
                   key={i}
@@ -201,7 +264,7 @@ class Questions extends React.Component {
           </Button>
         </Grid>
         <Snackbar
-          anchorOrigin={{vertical: 'top', horizontal: 'left'}}
+          anchorOrigin={{vertical: 'top', horizontal: 'right'}}
           open={showMessage}
           onClose={this._handleErrorMessageClose}
           message={<span>{message}</span>}

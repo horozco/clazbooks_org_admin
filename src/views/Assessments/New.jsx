@@ -415,6 +415,7 @@ class New extends React.Component {
                            name: 'book',
                            id: 'book_id',
                          }}
+                         disabled
                        >
                          {
                           books.map((author, i) =>

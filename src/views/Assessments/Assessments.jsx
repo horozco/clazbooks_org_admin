@@ -201,7 +201,7 @@ class Assessments extends React.Component {
               { currentPage === 'approved' ? <Approved assessments={assessments} /> : null }
 
               <Snackbar
-                anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                 open={showMessage}
                 onClose={this._handleErrorMessageClose}
                 message={<span>{this.state.message}</span>}

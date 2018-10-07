@@ -1,10 +1,12 @@
 import React from 'react';
 import { Grid } from "material-ui";
-import { RegularCard, ItemGrid } from "components";
+import { RegularCard, ItemGrid, Button } from "components";
 import {
   TextField,
   Radio
 } from "material-ui";
+
+import Delete from '@material-ui/icons/Delete';
 
 class Answer extends React.Component {
 
@@ -28,7 +30,9 @@ class Answer extends React.Component {
       correctAnswer,
       index,
       questionIndex,
-      handleCorrectAnswerChange
+      handleCorrectAnswerChange,
+      handleEnter,
+      handleRemove
     } = this.props;
 
     return (
@@ -41,17 +45,29 @@ class Answer extends React.Component {
             aria-label={`body${index}`}
           />
         </ItemGrid>
-        <ItemGrid xs={10} sm={10} md={10}>
+        <ItemGrid xs={8} sm={8} md={8}>
           <TextField
             id={`body${index}`}
-            label={`Respuesta #${index}`}
+            label={`Respuesta #${index+1}`}
             name={`body${index}`}
             onChange={this._handleAnswerChange(questionIndex, index)}
+            onKeyPress={handleEnter(questionIndex)}
             value={body}
             fullWidth
             margin="normal"
             required
           />
+        </ItemGrid>
+        <ItemGrid xs={2} sm={2} md={2}>
+          <Button
+            onClick={handleRemove(questionIndex, index)}
+            variant="fab"
+            color="danger"
+            aria-label="_handleDeleteAnswer"
+            round
+          >
+            <Delete />
+          </Button>
         </ItemGrid>
       </Grid>
     )

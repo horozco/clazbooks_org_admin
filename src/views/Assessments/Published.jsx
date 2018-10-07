@@ -61,22 +61,22 @@ class Published extends React.Component {
                         placeholder='Buscar'
                       />
                   },
-                  // {
-                  //   Header: 'Fecha publicado ⇵',
-                  //   id: 'created_at',
-                  //   accessor: assessment =>
-                  //     new Date(assessment.created_at).toISOString().slice(0,10),
-                  //   Filter: ({ filter, onChange }) =>
-                  //     <input
-                  //       onChange={event => onChange(event.target.value)}
-                  //       style={{ width: '100%' }}
-                  //       placeholder='Buscar'
-                  //     />
-                  // },
+                  {
+                    Header: 'Fecha publicado ⇵',
+                    id: 'created_at',
+                    accessor: assessment =>
+                      new Date(assessment.created_at).toISOString().slice(0,10),
+                    Filter: ({ filter, onChange }) =>
+                      <input
+                        onChange={event => onChange(event.target.value)}
+                        style={{ width: '100%' }}
+                        placeholder='Buscar'
+                      />
+                  },
                   {
                     Header: 'Enviado a ⇵',
-                    accessor: 'users_sent',
-                    id: 'users_sent',
+                    accessor: 'user_count',
+                    id: 'user_count',
                     Filter: ({ filter, onChange }) =>
                       <input
                         onChange={event => onChange(event.target.value)}
@@ -86,8 +86,8 @@ class Published extends React.Component {
                   },
                   {
                     Header: '# Aprobados ⇵',
-                    accessor: 'approved_users_amount',
-                    id: 'approved_users_amount',
+                    accessor: 'user_approved',
+                    id: 'user_approved',
                     Filter: ({ filter, onChange }) =>
                       <input
                         onChange={event => onChange(event.target.value)}

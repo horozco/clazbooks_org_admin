@@ -134,7 +134,7 @@ class Login extends React.Component {
                             }
                             label="Recordarme"
                           />
-                        </div> 
+                        </div>
 
                         <div className="field-wrapper">
                           <Button variant="raised" color="primary" type="submit" disabled={isSubmitting}>
@@ -149,7 +149,7 @@ class Login extends React.Component {
                   )}
                 />
                 <Snackbar
-                  anchorOrigin={{vertical: 'top', horizontal: 'left'}}
+                  anchorOrigin={{vertical: 'top', horizontal: 'right'}}
                   open={showError}
                   onClose={this._handleErrorMessageClose}
                   message={<span>{this.state.errors.message}</span>}
