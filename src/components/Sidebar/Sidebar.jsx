@@ -56,8 +56,8 @@ const Sidebar = ({ ...props }) => {
               style={{zIndex: 0, color: 'white'}}
             >
              {
-              managedOrganizations().map(organization =>
-                <MenuItem value={organization.id}>{organization.name}</MenuItem>
+              managedOrganizations().map((organization, key) =>
+                <MenuItem value={organization.id} key={key}>{organization.name}</MenuItem>
               )
              }
             </Select>

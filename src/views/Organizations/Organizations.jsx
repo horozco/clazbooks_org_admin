@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 
 import {
   Done,
@@ -14,7 +13,8 @@ import {
   Save,
   Cancel,
   Close,
-  AddCircleOutline
+  AddCircleOutline,
+  Add,
 } from "@material-ui/icons";
 
 import {
@@ -22,18 +22,13 @@ import {
   Snackbar,
   IconButton,
   Grid,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  TextField,
 } from "material-ui";
 
 import { SessionConsumer } from "components/Session/SessionContext.jsx";
 
 import { StatsCard, ChartCard, RegularCard, ItemGrid, Button } from "components";
 import ReactTable from 'react-table';
+import { getOrganization } from '../../utils/session.js';
 
 import { Link } from "react-router-dom";
 import client from '../../utils/client';
@@ -41,34 +36,38 @@ import URLS from "../../constants/urls.js";
 
 import dashboardStyle from "assets/jss/material-dashboard-react/dashboardStyle";
 
-import SimpleMDE from 'react-simplemde-editor';
-import "simplemde/dist/simplemde.min.css";
+import CurrentOrganization from './CurrentOrganization'
+import MyOrganizations from './MyOrganizations'
+import { isSuperAdmin, managedOrganization } from '../../utils/session.js';
 
 class Organizations extends React.Component {
   state = {
     status: "loading",
-    currentPost: { id: null, title: '', md_content: '' },
-    published_posts: 0,
-    posts: [],
-    editForm: false,
-    openFormModal: false,
+    organization: {
+      name: '', phone: '', email: '', logo: ''
+    },
+    message: '',
+    organizations: [],
     showMessage: false,
-    isSubmitting: false,
-
+    currentPage: 'currentOrganization',
+    isSubmitting: false
   };
 
   componentDidMount() {
-    this._getAllPosts();
+    this.getOrganizationInfo();
+    if (isSuperAdmin()) {
+      this.getOrganizationsInfo();
+    }
   }
 
-  _getAllPosts = () => {
+  getOrganizationInfo = () => {
+    const organization_id = isSuperAdmin() ? managedOrganization() : getOrganization().id
     return client
-      .get(URLS.POSTS)
-        .then(({ data: posts }) => {
+      .get(`${URLS.ORGANIZATIONS}${organization_id}`)
+        .then(({ data: organization }) => {
           this.setState({
-            ...posts,
-            ...{published_posts: posts.posts.length},
-            status: "success"
+            ...organization,
+            status: 'success'
           });
         })
         .catch(() => {
@@ -76,161 +75,90 @@ class Organizations extends React.Component {
             status: "error"
           });
         });
-  };
+  }
 
-  _filterCaseInsensitive = (filter, row) => {
-    const id = filter.pivotId || filter.id;
-    return (
-      row[id] !== undefined ?
-        String(row[id].toLowerCase()).startsWith(filter.value.toLowerCase())
-        :
-        true
-    );
-  };
-
-  _handleUnpublish = post => event => {
-    event.preventDefault();
-    alert(`Despublicando ${post.title}`)
-  };
-
-  _handleEdit = post => event => {
-    event.preventDefault();
-    this.setState({
-      currentPost: { ...post },
-      openFormModal: true,
-      editForm: true,
-    });
-  };
-
-  _handleDestroy = post => event => {
-    event.preventDefault();
-    if (
-      window.confirm(
-        '¿Está seguro que desea eliminar este mensaje?'
-      )
-    ) {
-      client
-        .delete(`${URLS.POSTS}/${post.id}`)
-        .then(({ data }) => {
+  getOrganizationsInfo = () => {
+    return client
+      .get(URLS.ORGANIZATIONS)
+        .then(({ data: organizations }) => {
           this.setState({
-            showMessage: true,
-            message: 'Se ha eliminado el mensaje.',
-          }, () => {
-            this._getAllPosts();
+            ...organizations,
+            status: 'success'
           });
         })
-        .catch(err => {
+        .catch(() => {
           this.setState({
-            showMessage: true,
-            message: err.response.data.message || 'Ha ocurrido un error.',
+            status: "error"
           });
         });
-    }
+  }
+
+  _handlePageChange = pageName => event => {
+    this.setState({currentPage: pageName})
   };
 
-  _handleAddNewPost = () => {
-    this.setState({ openFormModal: true });
-  };
-
-  _handleClose = () => {
+  _handleChangeOrganization = (field, value) => {
     this.setState({
-      openFormModal: false,
-      currentPost: { id: null, title: '', md_content: '' },
-      editForm: false,
-    });
-  };
-
-  _handleChange = field => event => {
-    this.setState({
-      currentPost: {
-        ...this.state.currentPost,
-        [field]: event.target ? event.target.value : event,
+      organization:{
+        ...this.state.organization,
+        [field]: value
       },
     });
   };
 
-  _successSave = data => {
-    var message = '';
-    if (data.errors && data.errors.length >= 1) {
-      message = data.errors
-        .map(error => {
-          return error;
-        })
-        .join('-');
-    }
-    this._getAllPosts();
-    this.setState({
-      openFormModal: false,
-      currentPost: { id: null, title: '', md_content: '' },
-      isSubmitting: false,
-      showMessage: true,
-      editForm: false,
-      message: message || 'Se ha guardado el mensaje.',
-    });
-  };
-
-  _handleSubmit = event => {
+  _handleUpdateCurrentOrg = () => event => {
     event.preventDefault();
-    this.setState(
-      {
-        isSubmitting: true,
-      },
-      () => {
-        const formData = new FormData();
-        if (this.title.value) {
-          formData.append('post[title]', this.title.value);
-        }
-
-        if (this.md_content.value) {
-          formData.append("post[new_reader_attributes][md_content]", this.md_content.value);
-        }
-
-        const method = this.state.editForm ? 'put' : 'post';
-        const url = this.state.editForm
-          ? `${URLS.POSTS}${this.state.currentPost.id}`
-          : URLS.POSTS;
-
-        if (this.title.value || this.md_content.value) {
-          client[method](url, formData)
-            .then(({ data }) => {
-              this._successSave(data);
-            })
-            .catch(error => {
-              this._handleError(error);
-            });
-        } else {
-          this._handleError('No se han realizado cambios.');
-        }
-      }
-    );
-  };
-
-  _handleError = errorMessage => {
     this.setState({
-      currentPost: { id: null, title: '', intro: '', md_content: '' },
-      showMessage: true,
-      isSubmitting: false,
-      message: errorMessage,
-      openFormModal: false,
-    });
-  };
+      isSubmitting: true
+    }, () => {
+      const data = new FormData();
+      if (this.state.organization.name) {
+        data.append("organization[name]", this.state.organization.name);
+      }
+      if (this.state.organization.email) {
+        data.append("organization[email]", this.state.organization.email);
+      }
+      if (this.state.organization.phone) {
+        data.append("organization[phone]", this.state.organization.phone);
+      }
+      // if (this.state.organization.logo) {
+      //   data.append("organization[logo]", this.state.logo.files[0]);
+      // }
 
-  _handleErrorMessageClose = () => {
-    this.setState({ showMessage: false, message: '' });
+      if (this.state.organization.name || this.state.organization.logo) {
+        client
+          .put(`${URLS.ORGANIZATIONS}${this.state.organization.id}`, data)
+            .then((response) => {
+              this.setState({
+                success: true,
+                isSubmitting: false,
+                showMessage: true,
+                message: 'Se ha actualizado correctamente la organización.'
+              })
+            })
+      }else{
+        this.setState({
+          success: true,
+          isSubmitting: false,
+          showMessage: true,
+          message: 'No se han realizado cambios'
+        })
+      }
+    })
   };
 
   render() {
     const {
       status,
-      published_posts,
-      posts,
       showMessage,
       message,
-      openFormModal,
-      currentPost,
+      organization,
+      organizations,
       isSubmitting,
-      editForm,
+      currentPage,
     } = this.state;
+
+    const currentOrganizationId = getOrganization().id;
 
     if(status == 'loading') {
       return <h1>Cargando...</h1>
@@ -246,94 +174,65 @@ class Organizations extends React.Component {
                   <StatsCard
                     icon={Done}
                     iconColor="red"
-                    title=""
-                    description={''}
+                    title="Mi Organización"
+                    description={'-'}
                     small=""
                     statIcon={Done}
                     statIconColor="danger"
-                    statText=""
+                    statText="Información general de tu organización."
+                    onClick={this._handlePageChange('currentOrganization')}
+                    selected={currentPage==='currentOrganization'}
                   />
                 </ItemGrid>
-                <ItemGrid xs={12} sm={6} md={4}>
-                  <StatsCard
-                    icon={DoneAll}
-                    iconColor="orange"
-                    title=""
-                    description={''}
-                    statIcon={DoneAll}
-                    statText=""
-                  />
-                </ItemGrid>
-                <ItemGrid xs={12} sm={6} md={4}>
-                  <StatsCard
-                    icon={Web}
-                    iconColor="green"
-                    title=""
-                    description={''}
-                    statIcon={Web}
-                    statText=""
-                    onClick={this._handleAddNewPost}
-                  />
-                </ItemGrid>
-              </Grid>
-              <Grid container>
-                <ItemGrid xs={12} sm={12} md={12}>
-                  <RegularCard
-                    headerColor="blue"
-                    cardTitle="Coming soon..."
-                    cardSubtitle="Coming soon..."
-                    content={
-                      <div></div>
-                    }
-                  />
-                </ItemGrid>
+                {
+                  organizations.length >= 1 ?
+                    (
+                      <React.Fragment>
+                        <ItemGrid xs={12} sm={6} md={4}>
+                          <StatsCard
+                            icon={DoneAll}
+                            iconColor="orange"
+                            title="Mis Organizaciones"
+                            description={'-'}
+                            statIcon={DoneAll}
+                            statText="Administra tus organizaciones."
+                            onClick={this._handlePageChange('myOrganizations')}
+                            selected={currentPage==='myOrganizations'}
+                          />
+                        </ItemGrid>
+                        <ItemGrid xs={12} sm={6} md={4}>
+                          <StatsCard
+                            icon={Web}
+                            iconColor="green"
+                            title="Crear organizaciones"
+                            description={'-'}
+                            statIcon={Web}
+                            statText="Crea nuevas organizaciones."
+                            onClick={this._handlePageChange('createOrganization')}
+                            selected={currentPage==='createOrganization'}
+                          />
+                        </ItemGrid>
+                      </React.Fragment>
+                    ) : null
+                }
               </Grid>
 
-              <Dialog
-                open={this.state.openFormModal}
-                aria-labelledby="form-dialog-title"
-              >
-                <form onSubmit={this._handleSubmit}>
-                  <DialogTitle id="form-dialog-title">
-                    {this.state.editForm ? 'Editar Mensaje' : 'Crear Nuevo Mensaje'}
-                  </DialogTitle>
-                  <DialogContent>
-                    <DialogContentText>
-                      {this.state.editForm ? 'Ingrese la información del mensaje que desea modificar.' : 'Ingrese la información del mensaje que desea crear.'}
-                    </DialogContentText>
-
-                    <TextField
-                      autoFocus
-                      id="title"
-                      label="Título"
-                      name="title"
-                      inputRef={ref => (this.title = ref)}
-                      onChange={this._handleChange('title')}
-                      value={currentPost.title}
-                      fullWidth
-                      margin="normal"
-                      required
-                    />
-                    <br/>
-                    <br/>
-                    <SimpleMDE
-                      ref={ref => (this.md_content = ref)}
-                      name='md_content'
-                      value={currentPost.md_content}
-                      onChange={this._handleChange('md_content')}
-                      required
-                    />
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={this._handleClose} color="primary">
-                      <Cancel /> Cancelar
-                    </Button>
-                    <Button type="submit" disabled={isSubmitting} color="primary">
-                      <Save /> Guardar
-                    </Button>
-                  </DialogActions>
-                </form>
-              </Dialog>
+              { currentPage === 'currentOrganization' ? (
+                  <CurrentOrganization
+                    organization={organization}
+                    updateOrg={this._handleUpdateCurrentOrg}
+                    isSubmitting={isSubmitting}
+                    changeOrganization={this._handleChangeOrganization}
+                  />
+                ) : null
+              }
+              { currentPage === 'myOrganizations' ? (
+                  <MyOrganizations
+                    organizations={organizations}
+                  />
+                ) : null
+              }
+              { currentPage === 'createOrganization' ? <h1>Pronto pordrás crear organizaciones.</h1> : null }
 
               <Snackbar
                 anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
@@ -358,9 +257,5 @@ class Organizations extends React.Component {
     );
   }
 }
-
-Organizations.propTypes = {
-  classes: PropTypes.object.isRequired
-};
 
 export default withStyles(dashboardStyle)(Organizations);
