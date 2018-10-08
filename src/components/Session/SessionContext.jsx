@@ -1,5 +1,13 @@
 import React, { Component } from "react";
-import { login, clearSession, loggedIn, getSession, setOrganization } from '../../utils/session.js';
+import {
+  login,
+  clearSession,
+  loggedIn,
+  getSession,
+  setOrganization,
+  managedOrganizations,
+  isSuperAdmin
+} from '../../utils/session.js';
 
 const { Provider, Consumer } = React.createContext();
 
@@ -8,7 +16,9 @@ export class SessionProvider extends Component {
     return login(params).then( ({data}) => {
       this.setState({
         ...data,
-        isLoggedIn: true
+        isLoggedIn: true,
+        isSuperAdmin: isSuperAdmin(),
+        managedOrganizations: managedOrganizations(),
       })
     });
   };
@@ -18,6 +28,8 @@ export class SessionProvider extends Component {
       clearSession();
       this.setState({
         isLoggedIn: false,
+        isSuperAdmin: false,
+        managedOrganizations: [],
       });
     });
   };

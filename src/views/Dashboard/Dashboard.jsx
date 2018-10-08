@@ -26,7 +26,7 @@ import {
 
 import { Link } from "react-router-dom";
 // import client from "../../utils/client.js";
-import axios from "axios";
+import client from '../../utils/client';
 import { getAccessToken } from '../../utils/session.js';
 import URLS from "../../constants/urls.js";
 
@@ -44,8 +44,8 @@ class Dashboard extends React.Component {
   };
 
   componentDidMount() {
-    axios
-      .get(URLS.DASHBOARD, { headers: { Authorization: getAccessToken() } })
+    client
+      .get(URLS.DASHBOARD)
         .then(({ data: { organization_dashboard } }) => {
           this.setState({
             ...organization_dashboard,

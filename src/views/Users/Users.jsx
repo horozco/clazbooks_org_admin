@@ -3,7 +3,7 @@ import { Grid } from 'material-ui';
 import { Link } from 'react-router-dom';
 
 // import client from '../../utils/client.js';
-import axios from 'axios';
+import client from '../../utils/client';
 import URLS from '../../constants/urls.js';
 import { getAccessToken } from '../../utils/session.js';
 
@@ -16,8 +16,8 @@ class Users extends React.Component {
   };
 
   componentWillMount() {
-    axios
-      .get(URLS.USERS, { headers: { Authorization: getAccessToken() } })
+    client
+      .get(URLS.USERS)
       .then(({ data }) => {
         this.setState({
           ...data,

@@ -9,13 +9,18 @@ import {
   List,
   ListItem,
   ListItemIcon,
-  ListItemText
+  ListItemText,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "material-ui";
 
 import { PowerSettingsNew } from '@material-ui/icons';
 
 import { HeaderLinks } from "components";
 import Signout from "../Session/Signout.jsx";
+import { isSuperAdmin, managedOrganizations } from '../../utils/session.js';
 
 import Logo from "components/OrganizationLogo/OrganizationLogo.jsx";
 
@@ -26,9 +31,38 @@ const Sidebar = ({ ...props }) => {
   function activeRoute(routeName) {
     return props.location.pathname.indexOf(routeName) > -1 ? true : false;
   }
+
   const { classes, color, logo, image, routes } = props;
+
   var links = (
     <List className={classes.list}>
+      {
+        isSuperAdmin() ?
+          <ListItem button className={classes.itemLink}>
+            <ListItemText
+              primary={'Seleccionar Organización'}
+              className={classes.itemText}
+              disableTypography={true}
+            />
+            <Select
+              value={props.managedOrganization}
+              onChange={props.changeManagedOrganization}
+              name='managed_organization_id'
+              inputRef={ref => (this.managed_organization_id = ref)}
+              inputProps={{
+                name: 'managed_organization',
+                id: 'managed_organization_id',
+              }}
+              style={{zIndex: 0, color: 'white'}}
+            >
+             {
+              managedOrganizations().map(organization =>
+                <MenuItem value={organization.id}>{organization.name}</MenuItem>
+              )
+             }
+            </Select>
+          </ListItem> : null
+      }
       {routes.filter(item => item.noSidebar !== true).map((prop, key) => {
         if (prop.redirect) return null;
         const listItemClasses = cx({
@@ -81,6 +115,7 @@ const Sidebar = ({ ...props }) => {
       </a>
     </div>
   );
+
   return (
     <div>
       <Hidden mdUp>

@@ -14,7 +14,7 @@ import appStyle from "assets/jss/material-dashboard-react/appStyle.jsx";
 
 import image from "assets/img/sidebar-2.jpg";
 
-import { getOrganization } from '../../utils/session.js';
+import { getOrganization, managedOrganization, setManagedOrganization } from '../../utils/session.js';
 
 const switchRoutes = (
   <Switch>
@@ -28,11 +28,17 @@ const switchRoutes = (
 
 class App extends React.Component {
   state = {
-    mobileOpen: false
+    mobileOpen: false,
+    selectOpen: false,
   };
 
   handleDrawerToggle = () => {
     this.setState({ mobileOpen: !this.state.mobileOpen });
+  };
+
+  handleManagedOrganizationChange = (evt) => {
+    setManagedOrganization(evt.target.value);
+    window.location.reload();
   };
 
   getRoute() {
@@ -60,6 +66,9 @@ class App extends React.Component {
           image={image}
           handleDrawerToggle={this.handleDrawerToggle}
           open={this.state.mobileOpen}
+          selectOpen={this.state.selectOpen}
+          managedOrganization={managedOrganization()}
+          changeManagedOrganization={this.handleManagedOrganizationChange}
           color="blue"
           {...rest}
         />

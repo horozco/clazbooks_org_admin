@@ -14,7 +14,7 @@ import {
   AccessTime
 } from "@material-ui/icons";
 
-import axios from "axios";
+import client from '../../utils/client';
 import URLS from "../../constants/urls.js";
 import { getAccessToken } from '../../utils/session.js';
 
@@ -24,20 +24,19 @@ class UserShow extends React.Component {
   }
 
   componentDidMount() {
-    axios
-      .get(`${URLS.USERS}${this.props.match.params.id}`,
-        { headers: { Authorization: getAccessToken() } })
-          .then(({ data }) => {
-            this.setState({
-              ...data,
-              status: "success"
-            });
-          })
-          .catch(() => {
-            this.setState({
-              status: "error"
-            });
+    client
+      .get(`${URLS.USERS}${this.props.match.params.id}`)
+        .then(({ data }) => {
+          this.setState({
+            ...data,
+            status: "success"
           });
+        })
+        .catch(() => {
+          this.setState({
+            status: "error"
+          });
+        });
   }
 
   _goBack = e => {

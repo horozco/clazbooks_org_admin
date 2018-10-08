@@ -9,7 +9,6 @@ import { getAccessToken } from '../../utils/session.js';
 import CloseIcon from '@material-ui/icons/Close';
 
 import client from "../../utils/client.js";
-import axios from "axios";
 import URLS from "../../constants/urls.js";
 import Logo from "../../components/OrganizationLogo/OrganizationLogo.jsx";
 
@@ -42,8 +41,8 @@ class Settings extends React.Component {
         data.append("organization[logo]", this.logo.files[0]);
       }
       if (this.name.value || this.logo.value) {
-        axios
-          .put(`${URLS.ORGANIZATIONS}${id}`, data, { headers: { Authorization: getAccessToken() } })
+        client
+          .put(`${URLS.ORGANIZATIONS}${id}`, data)
             .then((response) => {
               cb(response);
               this.setState({
