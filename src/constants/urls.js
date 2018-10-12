@@ -16,6 +16,9 @@ const URLS = {
   NOTIFICATIONS: `/organization_admin/push_notifications/`,
   ASSESSMENTS: `/organization_admin/assessments/`,
   EMAILS: `/organization_admin/emails/`,
+  MASSIVE_EMAILS: `/organization_admin/massive_emails/`,
+  CONTACTS: `/organization_admin/contacts/`,
+  CONTACT_LISTS: `/organization_admin/contact_lists/`,
 }
 
 export default URLS

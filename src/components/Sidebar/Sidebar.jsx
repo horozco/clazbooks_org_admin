@@ -48,7 +48,6 @@ const Sidebar = ({ ...props }) => {
               value={props.managedOrganization}
               onChange={props.changeManagedOrganization}
               name='managed_organization_id'
-              inputRef={ref => (this.managed_organization_id = ref)}
               inputProps={{
                 name: 'managed_organization',
                 id: 'managed_organization_id',

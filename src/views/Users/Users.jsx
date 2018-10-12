@@ -2,10 +2,8 @@ import React from 'react';
 import { Grid } from 'material-ui';
 import { Link } from 'react-router-dom';
 
-// import client from '../../utils/client.js';
 import client from '../../utils/client';
 import URLS from '../../constants/urls.js';
-import { getAccessToken } from '../../utils/session.js';
 
 import { RegularCard, ItemGrid } from 'components';
 import ReactTable from 'react-table';

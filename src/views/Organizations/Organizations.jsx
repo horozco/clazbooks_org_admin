@@ -27,7 +27,6 @@ import {
 import { SessionConsumer } from "components/Session/SessionContext.jsx";
 
 import { StatsCard, ChartCard, RegularCard, ItemGrid, Button } from "components";
-import ReactTable from 'react-table';
 import { getOrganization } from '../../utils/session.js';
 
 import { Link } from "react-router-dom";
